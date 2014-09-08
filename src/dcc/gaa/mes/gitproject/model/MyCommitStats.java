@@ -1,21 +1,30 @@
 package dcc.gaa.mes.gitproject.model;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import org.eclipse.egit.github.core.CommitStats;
 
 @Entity
-public class MyCommitStats {
+public class MyCommitStats  implements Serializable{
 	@Id
-    @GeneratedValue
+    @GeneratedValue(strategy =GenerationType.AUTO)
 //    @Column(name="commit_stats_id")
     private int id;
+	
+	@OneToOne(cascade= {CascadeType.REFRESH})
+	private MyRepositoryCommit repositoryCommit;
+	
 	private int additions;
 
 	private int deletions;
@@ -23,22 +32,35 @@ public class MyCommitStats {
 	private int total;
 
 	public MyCommitStats(CommitStats commitStats) {
-		Method[] gettersAndSetters = commitStats.getClass().getMethods();
+		if (commitStats!=null) {
+			Method[] gettersAndSetters = commitStats.getClass().getMethods();
+			for (int i = 0; i < gettersAndSetters.length; i++) {
+				String methodName = gettersAndSetters[i].getName();
+				try {
+					if (methodName.startsWith("get")
+							&& !methodName.equalsIgnoreCase("getTree")) {
+						this.getClass()
+								.getMethod(
+										methodName.replaceFirst("get", "set"),
+										gettersAndSetters[i].getReturnType())
+								.invoke(this,
+										gettersAndSetters[i].invoke(
+												commitStats, null));
+					} else if (methodName.startsWith("is")) {
+						this.getClass()
+								.getMethod(
+										methodName.replaceFirst("is", "set"),
+										gettersAndSetters[i].getReturnType())
+								.invoke(this,
+										gettersAndSetters[i].invoke(
+												commitStats, null));
+					}
 
-        for (int i = 0; i < gettersAndSetters.length; i++) {
-                String methodName = gettersAndSetters[i].getName();
-                try{
-                  if(methodName.startsWith("get")&& !methodName.equalsIgnoreCase("getTree")){
-                     this.getClass().getMethod(methodName.replaceFirst("get", "set") , gettersAndSetters[i].getReturnType() ).invoke(this, gettersAndSetters[i].invoke(commitStats, null));
-                        }else if(methodName.startsWith("is") ){
-                            this.getClass().getMethod(methodName.replaceFirst("is", "set") ,  gettersAndSetters[i].getReturnType()  ).invoke(this, gettersAndSetters[i].invoke(commitStats, null));
-                        }
-
-                }catch (NoSuchMethodException e) {
-                    // TODO: handle exception
-                }catch (IllegalArgumentException e) {
-                    // TODO: handle exception
-                } catch (IllegalAccessException e) {
+				} catch (NoSuchMethodException e) {
+					// TODO: handle exception
+				} catch (IllegalArgumentException e) {
+					// TODO: handle exception
+				} catch (IllegalAccessException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InvocationTargetException e) {
@@ -49,7 +71,8 @@ public class MyCommitStats {
 					e.printStackTrace();
 				}
 
-        }
+			}
+		}
 	}
 
 	public int getId() {
@@ -58,6 +81,15 @@ public class MyCommitStats {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	
+	public MyRepositoryCommit getRepositoryCommit() {
+		return repositoryCommit;
+	}
+
+	public void setRepositoryCommit(MyRepositoryCommit repositoryCommit) {
+		this.repositoryCommit = repositoryCommit;
 	}
 
 	/**

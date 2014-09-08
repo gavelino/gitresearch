@@ -13,14 +13,14 @@
 <property name="show_sql">true</property>
 <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
 <property name="hibernate.current_session_context_class">thread</property>
-<property name="hbm2ddl.auto">create</property>
+<!-- <property name="hbm2ddl.auto">create-drop</property> -->
+<mapping class="dcc.gaa.mes.gitproject.model.MyUser" />
+<mapping class="dcc.gaa.mes.gitproject.model.MyCommit" />
+<mapping class="dcc.gaa.mes.gitproject.model.MyCommitFile" />
+<mapping class="dcc.gaa.mes.gitproject.model.MyCommitStats" />
+<mapping class="dcc.gaa.mes.gitproject.model.MyCommitUser" />
+<mapping class="dcc.gaa.mes.gitproject.model.MyRepositoryCommit" />
 <mapping class="dcc.gaa.mes.gitproject.model.MySearchRepository" />
-<!-- <mapping class="dcc.gaa.mes.gitproject.model.MyUser" /> -->
-<!-- <mapping class="dcc.gaa.mes.gitproject.model.MyCommit" /> -->
-<!-- <mapping class="dcc.gaa.mes.gitproject.model.MyCommitFile" /> -->
-<!-- <mapping class="dcc.gaa.mes.gitproject.model.MyCommitStats" /> -->
-<!-- <mapping class="dcc.gaa.mes.gitproject.model.MyCommitUser" /> -->
-<!-- <mapping class="dcc.gaa.mes.gitproject.model.MyRepositoryCommit" /> -->
 
 </session-factory>
 </hibernate-configuration>

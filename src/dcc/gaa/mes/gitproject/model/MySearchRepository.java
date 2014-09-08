@@ -11,10 +11,12 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 
 
 
@@ -33,13 +35,13 @@ import org.hibernate.annotations.Cascade;
 import com.google.gson.annotations.SerializedName;
 
 @Entity
-public class MySearchRepository  {
+public class MySearchRepository  implements Serializable {
 
 	/** serialVersionUID */
 	private static final long serialVersionUID = 978627174722864632L;
 
 	@Id
-    @GeneratedValue
+    @GeneratedValue(strategy =GenerationType.AUTO)
 //    @Column(name="search_rep_id")
     private int id; 
 	
@@ -69,17 +71,17 @@ public class MySearchRepository  {
 	
 	private int commits;
 	
-//	@OneToMany(cascade={CascadeType.ALL})
-//	private List<MyRepositoryCommit> repositoryCommits;
-//	
-//
-//	public List<MyRepositoryCommit> getRepositoryCommits() {
-//		return repositoryCommits;
-//	}
-//
-//	public void setRepositoryCommits(List<MyRepositoryCommit> repositoryCommits) {
-//		this.repositoryCommits = repositoryCommits;
-//	}
+	@OneToMany(cascade={CascadeType.ALL}, mappedBy = "searchRepository")
+	private List<MyRepositoryCommit> repositoryCommits;
+	
+
+	public List<MyRepositoryCommit> getRepositoryCommits() {
+		return repositoryCommits;
+	}
+
+	public void setRepositoryCommits(List<MyRepositoryCommit> repositoryCommits) {
+		this.repositoryCommits = repositoryCommits;
+	}
 
 	/**
 	 * Create repository with owner and name
@@ -108,22 +110,35 @@ public class MySearchRepository  {
 	 * @throws IllegalAccessException 
 	 */
 	public MySearchRepository(SearchRepository searchRepository){
-		Method[] gettersAndSetters = searchRepository.getClass().getMethods();
+		if (searchRepository!=null) {
+			Method[] gettersAndSetters = searchRepository.getClass()
+					.getMethods();
+			for (int i = 0; i < gettersAndSetters.length; i++) {
+				String methodName = gettersAndSetters[i].getName();
+				try {
+					if (methodName.startsWith("get")) {
+						this.getClass()
+								.getMethod(
+										methodName.replaceFirst("get", "set"),
+										gettersAndSetters[i].getReturnType())
+								.invoke(this,
+										gettersAndSetters[i].invoke(
+												searchRepository, null));
+					} else if (methodName.startsWith("is")) {
+						this.getClass()
+								.getMethod(
+										methodName.replaceFirst("is", "set"),
+										gettersAndSetters[i].getReturnType())
+								.invoke(this,
+										gettersAndSetters[i].invoke(
+												searchRepository, null));
+					}
 
-        for (int i = 0; i < gettersAndSetters.length; i++) {
-                String methodName = gettersAndSetters[i].getName();
-                try{
-                  if(methodName.startsWith("get")){
-                     this.getClass().getMethod(methodName.replaceFirst("get", "set") , gettersAndSetters[i].getReturnType() ).invoke(this, gettersAndSetters[i].invoke(searchRepository, null));
-                        }else if(methodName.startsWith("is") ){
-                            this.getClass().getMethod(methodName.replaceFirst("is", "set") ,  gettersAndSetters[i].getReturnType()  ).invoke(this, gettersAndSetters[i].invoke(searchRepository, null));
-                        }
-
-                }catch (NoSuchMethodException e) {
-                    // TODO: handle exception
-                }catch (IllegalArgumentException e) {
-                    // TODO: handle exception
-                } catch (IllegalAccessException e) {
+				} catch (NoSuchMethodException e) {
+					// TODO: handle exception
+				} catch (IllegalArgumentException e) {
+					// TODO: handle exception
+				} catch (IllegalAccessException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InvocationTargetException e) {
@@ -134,8 +149,10 @@ public class MySearchRepository  {
 					e.printStackTrace();
 				}
 
-        }
+			}
+		}
 	}
+	
 	
 	/**
 	 * @see java.lang.Object#hashCode()

@@ -1,25 +1,32 @@
 package dcc.gaa.mes.gitproject.model;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.UserPlan;
 import org.eclipse.egit.github.core.util.DateUtils;
 
 @Entity
-public class MyUser {
+public class MyUser  implements Serializable{
 	
 	@Id
-    @GeneratedValue
+    @GeneratedValue(strategy =GenerationType.AUTO)
 //    @Column(name="user_id")
     private int id;
+	
+	@OneToOne(cascade= {CascadeType.REFRESH})
+	private MyRepositoryCommit repositoryCommit;
 	
 	/**
 	 * TYPE_USER
@@ -79,22 +86,33 @@ public class MyUser {
 //	private UserPlan plan;
 
 	public MyUser(User user) {
-		Method[] gettersAndSetters = user.getClass().getMethods();
+		if (user!=null) {
+			Method[] gettersAndSetters = user.getClass().getMethods();
+			for (int i = 0; i < gettersAndSetters.length; i++) {
+				String methodName = gettersAndSetters[i].getName();
+				try {
+					if (methodName.startsWith("get")
+							&& !methodName.equalsIgnoreCase("getPlan")) {
+						this.getClass()
+								.getMethod(
+										methodName.replaceFirst("get", "set"),
+										gettersAndSetters[i].getReturnType())
+								.invoke(this,
+										gettersAndSetters[i].invoke(user, null));
+					} else if (methodName.startsWith("is")) {
+						this.getClass()
+								.getMethod(
+										methodName.replaceFirst("is", "set"),
+										gettersAndSetters[i].getReturnType())
+								.invoke(this,
+										gettersAndSetters[i].invoke(user, null));
+					}
 
-        for (int i = 0; i < gettersAndSetters.length; i++) {
-                String methodName = gettersAndSetters[i].getName();
-                try{
-                  if(methodName.startsWith("get")&& !methodName.equalsIgnoreCase("getPlan")){
-                     this.getClass().getMethod(methodName.replaceFirst("get", "set") , gettersAndSetters[i].getReturnType() ).invoke(this, gettersAndSetters[i].invoke(user, null));
-                        }else if(methodName.startsWith("is") ){
-                            this.getClass().getMethod(methodName.replaceFirst("is", "set") ,  gettersAndSetters[i].getReturnType()  ).invoke(this, gettersAndSetters[i].invoke(user, null));
-                        }
-
-                }catch (NoSuchMethodException e) {
-                    // TODO: handle exception
-                }catch (IllegalArgumentException e) {
-                    // TODO: handle exception
-                } catch (IllegalAccessException e) {
+				} catch (NoSuchMethodException e) {
+					// TODO: handle exception
+				} catch (IllegalArgumentException e) {
+					// TODO: handle exception
+				} catch (IllegalAccessException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InvocationTargetException e) {
@@ -105,9 +123,21 @@ public class MyUser {
 					e.printStackTrace();
 				}
 
-        }
+			}
+		}
 	}
 	
+	
+	public MyRepositoryCommit getRepositoryCommit() {
+		return repositoryCommit;
+	}
+
+
+	public void setRepositoryCommit(MyRepositoryCommit repositoryCommit) {
+		this.repositoryCommit = repositoryCommit;
+	}
+
+
 	/**
 	 * @return hireable
 	 */

@@ -4,11 +4,16 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -22,9 +27,15 @@ import org.eclipse.egit.github.core.util.DateUtils;
 public class MyCommitUser implements Serializable {
 
 	@Id
-    @GeneratedValue
+    @GeneratedValue(strategy =GenerationType.AUTO)
 //    @Column(name="commit_user_id")
     private int id; 
+	
+	@OneToMany(cascade= {CascadeType.REFRESH}, mappedBy = "author")
+	private List<MyCommit> commitsAuthor;
+	
+	@OneToMany(cascade= {CascadeType.REFRESH}, mappedBy = "committer")
+	private List<MyCommit> commitsCommiter;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
@@ -34,22 +45,34 @@ public class MyCommitUser implements Serializable {
 	private String name;
 
 	public MyCommitUser(CommitUser commitUser) {
-		Method[] gettersAndSetters = commitUser.getClass().getMethods();
+		if (commitUser!=null) {
+			Method[] gettersAndSetters = commitUser.getClass().getMethods();
+			for (int i = 0; i < gettersAndSetters.length; i++) {
+				String methodName = gettersAndSetters[i].getName();
+				try {
+					if (methodName.startsWith("get")) {
+						this.getClass()
+								.getMethod(
+										methodName.replaceFirst("get", "set"),
+										gettersAndSetters[i].getReturnType())
+								.invoke(this,
+										gettersAndSetters[i].invoke(commitUser,
+												null));
+					} else if (methodName.startsWith("is")) {
+						this.getClass()
+								.getMethod(
+										methodName.replaceFirst("is", "set"),
+										gettersAndSetters[i].getReturnType())
+								.invoke(this,
+										gettersAndSetters[i].invoke(commitUser,
+												null));
+					}
 
-        for (int i = 0; i < gettersAndSetters.length; i++) {
-                String methodName = gettersAndSetters[i].getName();
-                try{
-                  if(methodName.startsWith("get")){
-                     this.getClass().getMethod(methodName.replaceFirst("get", "set") , gettersAndSetters[i].getReturnType() ).invoke(this, gettersAndSetters[i].invoke(commitUser, null));
-                        }else if(methodName.startsWith("is") ){
-                            this.getClass().getMethod(methodName.replaceFirst("is", "set") ,  gettersAndSetters[i].getReturnType()  ).invoke(this, gettersAndSetters[i].invoke(commitUser, null));
-                        }
-
-                }catch (NoSuchMethodException e) {
-                    // TODO: handle exception
-                }catch (IllegalArgumentException e) {
-                    // TODO: handle exception
-                } catch (IllegalAccessException e) {
+				} catch (NoSuchMethodException e) {
+					// TODO: handle exception
+				} catch (IllegalArgumentException e) {
+					// TODO: handle exception
+				} catch (IllegalAccessException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InvocationTargetException e) {
@@ -60,7 +83,8 @@ public class MyCommitUser implements Serializable {
 					e.printStackTrace();
 				}
 
-        }
+			}
+		}
 	}
 
 	public int getId() {
@@ -71,6 +95,7 @@ public class MyCommitUser implements Serializable {
 		this.id = id;
 	}
 
+	
 	/**
 	 * @return date
 	 */

@@ -3,82 +3,86 @@ package dcc.gaa.mes.gitproject.model;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
 
+import org.eclipse.egit.github.core.Commit;
+import org.eclipse.egit.github.core.CommitFile;
 import org.eclipse.egit.github.core.RepositoryCommit;
 
 
 
 @Entity
-public class MyRepositoryCommit {
+public class MyRepositoryCommit  implements Serializable{
 	
 	@Id
-    @GeneratedValue
+    @GeneratedValue(strategy =GenerationType.AUTO)
 //    @Column(name="rep_commit_id")
     private int id; 
 	
-	@OneToOne(cascade={CascadeType.ALL})
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	private MySearchRepository searchRepository;
 	
+	@OneToOne(cascade={CascadeType.ALL}, mappedBy = "repositoryCommit")	
 	private MyCommit commit;
 
-	@OneToOne(cascade={CascadeType.ALL})
+	@OneToOne(cascade={CascadeType.ALL}, mappedBy = "repositoryCommit")
 	private MyCommitStats stats;
 
-	@OneToMany(cascade={CascadeType.ALL})
+	@OneToMany(cascade={CascadeType.ALL}, mappedBy = "repositoryCommit")	
     private List<MyCommit> parents;
 	
 	@OneToMany(cascade={CascadeType.ALL})
-    private List<MyCommitFile> files;
+	private List<MyCommitFile> files;
 
 	private String sha;
 
 	private String url;
 	
-	@OneToOne(cascade={CascadeType.ALL})
+	@OneToOne(cascade={CascadeType.REFRESH}, mappedBy = "repositoryCommit")
 	private MyUser author;
 
-	@OneToOne(cascade={CascadeType.ALL})
+	@OneToOne(cascade={CascadeType.REFRESH}, mappedBy = "repositoryCommit")
 	private MyUser committer;
 	
 	public MyRepositoryCommit(RepositoryCommit repositoryCommit) {
-		Method[] gettersAndSetters = repositoryCommit.getClass().getMethods();
-
-        for (int i = 0; i < gettersAndSetters.length; i++) {
-                String methodName = gettersAndSetters[i].getName();
-                try{
-                  if(methodName.startsWith("get")){
-                     this.getClass().getMethod(methodName.replaceFirst("get", "set") , gettersAndSetters[i].getReturnType() ).invoke(this, gettersAndSetters[i].invoke(repositoryCommit, null));
-                        }else if(methodName.startsWith("is") ){
-                            this.getClass().getMethod(methodName.replaceFirst("is", "set") ,  gettersAndSetters[i].getReturnType()  ).invoke(this, gettersAndSetters[i].invoke(repositoryCommit, null));
-                        }
-
-                }catch (NoSuchMethodException e) {
-                    // TODO: handle exception
-                }catch (IllegalArgumentException e) {
-                    // TODO: handle exception
-                } catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SecurityException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+		if (repositoryCommit!=null) {
+			this.setCommit(new MyCommit(repositoryCommit.getCommit()));
+			this.setStats(new MyCommitStats(repositoryCommit.getStats()));
+			this.parents = new ArrayList<MyCommit>();
+			if (repositoryCommit.getParents() != null) {
+				for (Commit parentCommit : repositoryCommit.getParents()) {
+					parents.add(new MyCommit(parentCommit));
 				}
-
-        }
+			}
+			this.files = new ArrayList<MyCommitFile>();
+			if (repositoryCommit.getFiles() != null) {
+				for (CommitFile commitFile : repositoryCommit.getFiles()) {
+					files.add(new MyCommitFile(commitFile));
+				}
+			}
+			this.setSha(commit.getSha());
+			this.setUrl(commit.getUrl());
+			this.setAuthor(new MyUser(repositoryCommit.getAuthor()));
+			this.setCommitter(new MyUser(repositoryCommit.getCommitter()));
+		}
+		
 	}
-	@Id
 	public int getId() {
 		return id;
 	}
@@ -87,6 +91,13 @@ public class MyRepositoryCommit {
 		this.id = id;
 	}
 
+	public MySearchRepository getSearchRepository() {
+		return searchRepository;
+	}
+	public void setSearchRepository(MySearchRepository searchRepository) {
+		this.searchRepository = searchRepository;
+	}
+	
 	/**
 	 * @return commit
 	 */
@@ -146,9 +157,8 @@ public class MyRepositoryCommit {
 	 * @param files
 	 * @return this commit
 	 */
-	public MyRepositoryCommit setFiles(List<MyCommitFile> files) {
+	public void setFiles(List<MyCommitFile> files) {
 		this.files = files;
-		return this;
 	}
 
 	/**

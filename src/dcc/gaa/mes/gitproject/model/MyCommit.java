@@ -1,28 +1,37 @@
 package dcc.gaa.mes.gitproject.model;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.eclipse.egit.github.core.Commit;
 
 //import org.eclipse.egit.github.core.Tree;
 @Entity
-public class MyCommit {
+public class MyCommit implements Serializable{
 
 	@Id
-    @GeneratedValue
-    private int id; 
+    @GeneratedValue(strategy =GenerationType.AUTO)
+    private int id;
 	
+	@ManyToOne(cascade= {CascadeType.REFRESH})
+	private MyRepositoryCommit repositoryCommit;
+	
+	@ManyToOne(cascade= {CascadeType.ALL})
 	private MyCommitUser author;
 
+	@ManyToOne(cascade= {CascadeType.ALL})
 	private MyCommitUser committer;
 
 	private int commentCount;
@@ -32,6 +41,7 @@ public class MyCommit {
 
 	private String message;
 
+
 	private String sha;
 
 	private String url;
@@ -39,45 +49,44 @@ public class MyCommit {
 //	private Tree tree;
 
 	public MyCommit(Commit commit) {
-		Method[] gettersAndSetters = commit.getClass().getMethods();
-
-        for (int i = 0; i < gettersAndSetters.length; i++) {
-                String methodName = gettersAndSetters[i].getName();
-                try{
-                  if(methodName.startsWith("get")&& !methodName.equalsIgnoreCase("getTree")){
-                     this.getClass().getMethod(methodName.replaceFirst("get", "set") , gettersAndSetters[i].getReturnType() ).invoke(this, gettersAndSetters[i].invoke(commit, null));
-                        }else if(methodName.startsWith("is") ){
-                            this.getClass().getMethod(methodName.replaceFirst("is", "set") ,  gettersAndSetters[i].getReturnType()  ).invoke(this, gettersAndSetters[i].invoke(commit, null));
-                        }
-
-                }catch (NoSuchMethodException e) {
-                    // TODO: handle exception
-                }catch (IllegalArgumentException e) {
-                    // TODO: handle exception
-                } catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SecurityException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+		if (commit!=null) {
+			this.setAuthor(new MyCommitUser(commit.getAuthor()));
+			this.setCommitter(new MyCommitUser(commit.getCommitter()));
+			this.setCommentCount(commit.getCommentCount());
+			this.parents = new ArrayList<MyCommit>();
+			if (commit.getParents() != null) {
+				for (Commit parentCommit : commit.getParents()) {
+					parents.add(new MyCommit(parentCommit));
 				}
-
-        }
+			}
+			this.setMessage(commit.getMessage());
+			this.setSha(commit.getSha());
+			this.setUrl(commit.getUrl());
+		}
 	}
 	
 	
+
 	public int getId() {
 		return id;
 	}
+
 
 
 	public void setId(int id) {
 		this.id = id;
 	}
 
+
+
+	public MyRepositoryCommit getRepositoryCommit() {
+		return repositoryCommit;
+	}
+
+
+	public void setRepositoryCommit(MyRepositoryCommit repositoryCommit) {
+		this.repositoryCommit = repositoryCommit;
+	}
 
 	/**
 	 * @return author
