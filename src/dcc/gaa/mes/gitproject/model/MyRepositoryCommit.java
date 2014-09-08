@@ -1,39 +1,96 @@
 package dcc.gaa.mes.gitproject.model;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
-import org.eclipse.egit.github.core.Commit;
-import org.eclipse.egit.github.core.CommitFile;
-import org.eclipse.egit.github.core.CommitStats;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+
 import org.eclipse.egit.github.core.RepositoryCommit;
-import org.eclipse.egit.github.core.User;
 
+
+
+@Entity
 public class MyRepositoryCommit {
+	
+	@Id
+    @GeneratedValue
+//    @Column(name="rep_commit_id")
+    private int id; 
+	
+	@OneToOne(cascade={CascadeType.ALL})
+	
+	private MyCommit commit;
 
-	/** serialVersionUID */
-	private static final long serialVersionUID = -8911733018395257250L;
+	@OneToOne(cascade={CascadeType.ALL})
+	private MyCommitStats stats;
 
-	private Commit commit;
-
-	private CommitStats stats;
-
-	private List<Commit> parents;
-
-	private List<CommitFile> files;
+	@OneToMany(cascade={CascadeType.ALL})
+    private List<MyCommit> parents;
+	
+	@OneToMany(cascade={CascadeType.ALL})
+    private List<MyCommitFile> files;
 
 	private String sha;
 
 	private String url;
+	
+	@OneToOne(cascade={CascadeType.ALL})
+	private MyUser author;
 
-	private User author;
+	@OneToOne(cascade={CascadeType.ALL})
+	private MyUser committer;
+	
+	public MyRepositoryCommit(RepositoryCommit repositoryCommit) {
+		Method[] gettersAndSetters = repositoryCommit.getClass().getMethods();
 
-	private User committer;
+        for (int i = 0; i < gettersAndSetters.length; i++) {
+                String methodName = gettersAndSetters[i].getName();
+                try{
+                  if(methodName.startsWith("get")){
+                     this.getClass().getMethod(methodName.replaceFirst("get", "set") , gettersAndSetters[i].getReturnType() ).invoke(this, gettersAndSetters[i].invoke(repositoryCommit, null));
+                        }else if(methodName.startsWith("is") ){
+                            this.getClass().getMethod(methodName.replaceFirst("is", "set") ,  gettersAndSetters[i].getReturnType()  ).invoke(this, gettersAndSetters[i].invoke(repositoryCommit, null));
+                        }
+
+                }catch (NoSuchMethodException e) {
+                    // TODO: handle exception
+                }catch (IllegalArgumentException e) {
+                    // TODO: handle exception
+                } catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+        }
+	}
+	@Id
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	/**
 	 * @return commit
 	 */
-	public Commit getCommit() {
+	public MyCommit getCommit() {
 		return commit;
 	}
 
@@ -41,7 +98,7 @@ public class MyRepositoryCommit {
 	 * @param commit
 	 * @return this commit
 	 */
-	public MyRepositoryCommit setCommit(Commit commit) {
+	public MyRepositoryCommit setCommit(MyCommit commit) {
 		this.commit = commit;
 		return this;
 	}
@@ -49,7 +106,7 @@ public class MyRepositoryCommit {
 	/**
 	 * @return stats
 	 */
-	public CommitStats getStats() {
+	public MyCommitStats getStats() {
 		return stats;
 	}
 
@@ -57,7 +114,7 @@ public class MyRepositoryCommit {
 	 * @param stats
 	 * @return this commit
 	 */
-	public MyRepositoryCommit setStats(CommitStats stats) {
+	public MyRepositoryCommit setStats(MyCommitStats stats) {
 		this.stats = stats;
 		return this;
 	}
@@ -65,7 +122,7 @@ public class MyRepositoryCommit {
 	/**
 	 * @return parents
 	 */
-	public List<Commit> getParents() {
+	public List<MyCommit> getParents() {
 		return parents;
 	}
 
@@ -73,7 +130,7 @@ public class MyRepositoryCommit {
 	 * @param parents
 	 * @return this commit
 	 */
-	public MyRepositoryCommit setParents(List<Commit> parents) {
+	public MyRepositoryCommit setParents(List<MyCommit> parents) {
 		this.parents = parents;
 		return this;
 	}
@@ -81,7 +138,7 @@ public class MyRepositoryCommit {
 	/**
 	 * @return files
 	 */
-	public List<CommitFile> getFiles() {
+	public List<MyCommitFile> getFiles() {
 		return files;
 	}
 
@@ -89,7 +146,7 @@ public class MyRepositoryCommit {
 	 * @param files
 	 * @return this commit
 	 */
-	public MyRepositoryCommit setFiles(List<CommitFile> files) {
+	public MyRepositoryCommit setFiles(List<MyCommitFile> files) {
 		this.files = files;
 		return this;
 	}
@@ -129,7 +186,7 @@ public class MyRepositoryCommit {
 	/**
 	 * @return author
 	 */
-	public User getAuthor() {
+	public MyUser getAuthor() {
 		return author;
 	}
 
@@ -137,7 +194,7 @@ public class MyRepositoryCommit {
 	 * @param author
 	 * @return this commit
 	 */
-	public MyRepositoryCommit setAuthor(User author) {
+	public MyRepositoryCommit setAuthor(MyUser author) {
 		this.author = author;
 		return this;
 	}
@@ -145,7 +202,7 @@ public class MyRepositoryCommit {
 	/**
 	 * @return committer
 	 */
-	public User getCommitter() {
+	public MyUser getCommitter() {
 		return committer;
 	}
 
@@ -153,7 +210,7 @@ public class MyRepositoryCommit {
 	 * @param committer
 	 * @return this commit
 	 */
-	public MyRepositoryCommit setCommitter(User committer) {
+	public MyRepositoryCommit setCommitter(MyUser committer) {
 		this.committer = committer;
 		return this;
 	}

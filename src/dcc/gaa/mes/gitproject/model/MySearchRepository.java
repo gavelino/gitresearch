@@ -4,11 +4,15 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -18,8 +22,13 @@ import javax.persistence.TemporalType;
 
 
 
+
+
+
+
 import org.eclipse.egit.github.core.SearchRepository;
 import org.eclipse.egit.github.core.util.DateUtils;
+import org.hibernate.annotations.Cascade;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -31,7 +40,7 @@ public class MySearchRepository  {
 
 	@Id
     @GeneratedValue
-    @Column(name="persist_id")
+//    @Column(name="search_rep_id")
     private int id; 
 	
 	private boolean fork;
@@ -57,6 +66,20 @@ public class MySearchRepository  {
 	private int openIssues;
 	private int size;
 	private int watchers;
+	
+	private int commits;
+	
+//	@OneToMany(cascade={CascadeType.ALL})
+//	private List<MyRepositoryCommit> repositoryCommits;
+//	
+//
+//	public List<MyRepositoryCommit> getRepositoryCommits() {
+//		return repositoryCommits;
+//	}
+//
+//	public void setRepositoryCommits(List<MyRepositoryCommit> repositoryCommits) {
+//		this.repositoryCommits = repositoryCommits;
+//	}
 
 	/**
 	 * Create repository with owner and name
@@ -113,7 +136,7 @@ public class MySearchRepository  {
 
         }
 	}
-
+	
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -348,6 +371,14 @@ public class MySearchRepository  {
 
 	public void setWatchers(int watchers) {
 		this.watchers = watchers;
+	}
+
+	public int getCommits() {
+		return commits;
+	}
+
+	public void setCommits(int commits) {
+		this.commits = commits;
 	}
 	
 }

@@ -45,8 +45,7 @@ public class Main {
 			int i = 0;
 			for (MySearchRepository repo : searchRepositories("rails", 1, 10)) {
 				System.out.println(++i + " - " +repo);
-
-				session.save(repo);
+				session.saveOrUpdate(repo);
 			}
 			
 			
@@ -78,15 +77,21 @@ public class Main {
 			//searchRepositories = repositoryService.searchRepositories(keyword, JAVA_LANGUAGE, initPage++);
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("language", "ruby");
-			//params.put("user", "mozilla");
+			params.put("user", "gavelino");
 			//params.put("forks", "<105");
-			params.put("stars", ">=5000");
+			params.put("stars", ">=20000");
 			
 			searchRepositories = repositoryService.searchRepositories(params, initPage++);
 			for (SearchRepository searchRepository : searchRepositories) {
-				//Repository rep = new Repository(searchRepository.toString(),commitService.getCommits(searchRepository));
-				//RepositoryTest rep = new RepositoryTest(searchRepository.toString(),new ArrayList<String>());
-				repositories.add(new MySearchRepository(searchRepository));				
+				MySearchRepository searchRep = new MySearchRepository(searchRepository);
+//				List<RepositoryCommit> repCommit = commitService.getCommits(searchRepository);
+//				List<MyRepositoryCommit> myRepCommit = new ArrayList<MyRepositoryCommit>();
+//				for (RepositoryCommit repositoryCommit : repCommit) {
+//					myRepCommit.add(new MyRepositoryCommit(repositoryCommit));
+//				}
+//				searchRep.setRepositoryCommits(myRepCommit);
+				searchRep.setCommits(commitService.getCommits(searchRepository).size());
+				repositories.add(searchRep);				
 			}
 
 		} while (searchRepositories.size() > 0 && initPage <= endPage);
