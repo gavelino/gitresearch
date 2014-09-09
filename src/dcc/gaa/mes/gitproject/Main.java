@@ -41,10 +41,15 @@ public class Main {
 	}
 	
 	public void init() {
-		
+//		searchRepositories = repositoryService.searchRepositories(keyword, JAVA_LANGUAGE, initPage++);
+		HashMap<String, String>params = new HashMap<String, String>();
+		params.put("language", "java");
+		params.put("user", "gavelino");
+//		params.put("forks", "<105");
+//		params.put("stars", ">=20000");
 		try {
 			int i = 0;
-			for (MySearchRepository repo : searchRepositories("rails", 1, 10)) {
+			for (MySearchRepository repo : searchRepositories(params, 1, 10)) {
 				System.out.println(++i + " - " +repo);
 				repositoryDao.persist(repo);
 				
@@ -59,7 +64,7 @@ public class Main {
 	
 	
 	
-	public static List<MySearchRepository> searchRepositories(final String keyword, int startPage, int endPage) throws IOException {
+	public static List<MySearchRepository> searchRepositories(Map<String, String> params, int startPage, int endPage) throws IOException {
 		GitHubClient client = new GitHubClient();
 		client.setOAuth2Token("fea785517975ea8eefd192926a03c16ffb489748");
 		
@@ -71,13 +76,7 @@ public class Main {
 
 		int initPage = startPage;
 		do {
-			//searchRepositories = repositoryService.searchRepositories(keyword, JAVA_LANGUAGE, initPage++);
-			Map<String, String> params = new HashMap<String, String>();
-			params.put("language", "java");
-			params.put("user", "gavelino");
-			//params.put("forks", "<105");
-//			params.put("stars", ">=20000");
-			
+					
 			searchRepositories = repositoryService.searchRepositories(params, initPage++);
 			for (SearchRepository searchRepository : searchRepositories) {
 				MySearchRepository searchRep = new MySearchRepository(searchRepository);
