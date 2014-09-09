@@ -52,6 +52,7 @@ public class MyCommitFile  implements Serializable{
 				String methodName = gettersAndSetters[i].getName();
 				try {
 					if (methodName.startsWith("get")
+							&& !methodName.equalsIgnoreCase("getClass")
 							&& !methodName.equalsIgnoreCase("getTree")) {
 						this.getClass()
 								.getMethod(
@@ -70,17 +71,7 @@ public class MyCommitFile  implements Serializable{
 												null));
 					}
 
-				} catch (NoSuchMethodException e) {
-					// TODO: handle exception
-				} catch (IllegalArgumentException e) {
-					// TODO: handle exception
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SecurityException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

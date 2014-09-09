@@ -54,7 +54,7 @@ public class MyCommitUser implements Serializable {
 			for (int i = 0; i < gettersAndSetters.length; i++) {
 				String methodName = gettersAndSetters[i].getName();
 				try {
-					if (methodName.startsWith("get")) {
+					if (methodName.startsWith("get") && !methodName.equalsIgnoreCase("getClass")) {
 						this.getClass()
 								.getMethod(
 										methodName.replaceFirst("get", "set"),
@@ -72,17 +72,7 @@ public class MyCommitUser implements Serializable {
 												null));
 					}
 
-				} catch (NoSuchMethodException e) {
-					// TODO: handle exception
-				} catch (IllegalArgumentException e) {
-					// TODO: handle exception
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SecurityException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

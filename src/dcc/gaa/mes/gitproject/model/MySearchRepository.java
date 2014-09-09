@@ -76,7 +76,9 @@ public class MySearchRepository implements Serializable {
 			for (int i = 0; i < gettersAndSetters.length; i++) {
 				String methodName = gettersAndSetters[i].getName();
 				try {
-					if (methodName.startsWith("get")) {
+					if (methodName.startsWith("get")
+							&& !methodName.equalsIgnoreCase("getClass")
+							&& !methodName.equalsIgnoreCase("getId")) {
 						this.getClass()
 								.getMethod(
 										methodName.replaceFirst("get", "set"),
@@ -94,18 +96,9 @@ public class MySearchRepository implements Serializable {
 												searchRepository, null));
 					}
 
-				} catch (NoSuchMethodException e) {
-					// TODO: handle exception
-				} catch (IllegalArgumentException e) {
-					// TODO: handle exception
-				} catch (IllegalAccessException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SecurityException e) {
-					// TODO Auto-generated catch block
+					System.out.println("error method "+methodName);
 					e.printStackTrace();
 				}
 
