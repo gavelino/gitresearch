@@ -33,15 +33,15 @@ public class RepositoryDao {
 				else
 					this.entityManager.merge(commit);
 			}
-			
-			if (commits.getAuthor().getId() == null)
-				this.entityManager.persist(commits.getAuthor());
-			else
+			//TODO Buscar outra forma verificar se o objeto ainda não foi persistido, pois como id não é mais gerado automaticamente essa verificação é falha. 
+//			if (commits.getAuthor().getId() == null)
+//				this.entityManager.persist(commits.getAuthor());
+//			else
 				this.entityManager.merge(commits.getAuthor());
 			
-			if (commits.getCommitter().getId() == null)
-				this.entityManager.persist(commits.getCommitter());
-			else
+//			if (commits.getCommitter().getId() == null)
+//				this.entityManager.persist(commits.getCommitter());
+//			else
 				this.entityManager.merge(commits.getCommitter());
 			
 			if (commits.getId() == null)

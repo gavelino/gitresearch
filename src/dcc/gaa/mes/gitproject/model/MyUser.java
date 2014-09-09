@@ -22,8 +22,8 @@ import org.eclipse.egit.github.core.util.DateUtils;
 public class MyUser  implements Serializable{
 	
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+//    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
 	
 	@OneToOne(cascade= {CascadeType.REFRESH})
 	private MyRepositoryCommit repositoryCommit;
@@ -98,7 +98,7 @@ public class MyUser  implements Serializable{
 				String methodName = gettersAndSetters[i].getName();
 				try {
 					if (methodName.startsWith("get")
-							&& !methodName.equalsIgnoreCase("getPlan")) {
+							&& !methodName.equalsIgnoreCase("getPlan")&& !methodName.equalsIgnoreCase("getClass")) {
 						this.getClass()
 								.getMethod(
 										methodName.replaceFirst("get", "set"),
@@ -114,18 +114,7 @@ public class MyUser  implements Serializable{
 										gettersAndSetters[i].invoke(user, null));
 					}
 
-				} catch (NoSuchMethodException e) {
-					// TODO: handle exception
-				} catch (IllegalArgumentException e) {
-					// TODO: handle exception
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SecurityException e) {
-					// TODO Auto-generated catch block
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 
@@ -243,7 +232,7 @@ public class MyUser  implements Serializable{
 	/**
 	 * @return id
 	 */
-	public Long getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -251,7 +240,7 @@ public class MyUser  implements Serializable{
 	 * @param id
 	 * @return this user
 	 */
-	public MyUser setId(Long id) {
+	public MyUser setId(int id) {
 		this.id = id;
 		return this;
 	}
