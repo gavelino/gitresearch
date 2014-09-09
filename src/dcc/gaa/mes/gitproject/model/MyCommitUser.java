@@ -43,6 +43,10 @@ public class MyCommitUser implements Serializable {
 	private String email;
 
 	private String name;
+	
+	public MyCommitUser() {
+		super();
+	}
 
 	public MyCommitUser(CommitUser commitUser) {
 		if (commitUser!=null) {

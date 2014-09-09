@@ -5,7 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,7 +18,7 @@ public class MyCommitFile  implements Serializable{
 	@Id
     @GeneratedValue (strategy = GenerationType.AUTO)
 //    @Column(name="commit_file_id")
-    private int id;
+    private Long id;
 	
 	@ManyToOne(cascade= {CascadeType.REFRESH})
 	private MyRepositoryCommit repositoryCommit;
@@ -41,6 +40,10 @@ public class MyCommitFile  implements Serializable{
 	private String sha;
 
 	private String status;
+	
+	public MyCommitFile() {
+		super();
+	}
 
 	public MyCommitFile(CommitFile commitFile) {
 		if (commitFile!=null) {
@@ -97,11 +100,11 @@ public class MyCommitFile  implements Serializable{
 	}
 
 
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

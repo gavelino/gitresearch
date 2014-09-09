@@ -1,41 +1,30 @@
 package dcc.gaa.mes.gitproject.model;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.OrderColumn;
 
 import org.eclipse.egit.github.core.Commit;
 import org.eclipse.egit.github.core.CommitFile;
 import org.eclipse.egit.github.core.RepositoryCommit;
 
-
-
 @Entity
 public class MyRepositoryCommit  implements Serializable{
 	
 	@Id
-    @GeneratedValue(strategy =GenerationType.AUTO)
-//    @Column(name="rep_commit_id")
-    private int id; 
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id; 
 	
-	@ManyToOne(cascade = CascadeType.REFRESH)
+	@ManyToOne(cascade = {CascadeType.REFRESH})
 	private MySearchRepository searchRepository;
 	
 	@OneToOne(cascade={CascadeType.ALL}, mappedBy = "repositoryCommit")	
@@ -44,7 +33,7 @@ public class MyRepositoryCommit  implements Serializable{
 	@OneToOne(cascade={CascadeType.ALL}, mappedBy = "repositoryCommit")
 	private MyCommitStats stats;
 
-	@OneToMany(cascade={CascadeType.ALL}, mappedBy = "repositoryCommit")	
+	@OneToMany(cascade={CascadeType.REFRESH}, mappedBy = "repositoryCommit")	
     private List<MyCommit> parents;
 	
 	@OneToMany(cascade={CascadeType.ALL})
@@ -59,6 +48,10 @@ public class MyRepositoryCommit  implements Serializable{
 
 	@OneToOne(cascade={CascadeType.REFRESH}, mappedBy = "repositoryCommit")
 	private MyUser committer;
+	
+	public MyRepositoryCommit() {
+		super();
+	}
 	
 	public MyRepositoryCommit(RepositoryCommit repositoryCommit) {
 		if (repositoryCommit!=null) {
@@ -83,11 +76,11 @@ public class MyRepositoryCommit  implements Serializable{
 		}
 		
 	}
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

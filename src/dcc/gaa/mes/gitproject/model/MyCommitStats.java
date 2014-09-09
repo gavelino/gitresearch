@@ -20,7 +20,7 @@ public class MyCommitStats  implements Serializable{
 	@Id
     @GeneratedValue(strategy =GenerationType.AUTO)
 //    @Column(name="commit_stats_id")
-    private int id;
+    private Long id;
 	
 	@OneToOne(cascade= {CascadeType.REFRESH})
 	private MyRepositoryCommit repositoryCommit;
@@ -30,6 +30,10 @@ public class MyCommitStats  implements Serializable{
 	private int deletions;
 
 	private int total;
+	
+	public MyCommitStats() {
+		super();
+	}
 
 	public MyCommitStats(CommitStats commitStats) {
 		if (commitStats!=null) {
@@ -75,11 +79,11 @@ public class MyCommitStats  implements Serializable{
 		}
 	}
 
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

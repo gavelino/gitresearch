@@ -6,24 +6,24 @@ import java.lang.reflect.Method;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.eclipse.egit.github.core.User;
-import org.eclipse.egit.github.core.UserPlan;
 import org.eclipse.egit.github.core.util.DateUtils;
 
+@SuppressWarnings("serial")
 @Entity
 public class MyUser  implements Serializable{
 	
 	@Id
-    @GeneratedValue(strategy =GenerationType.AUTO)
-//    @Column(name="user_id")
-    private int id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 	
 	@OneToOne(cascade= {CascadeType.REFRESH})
 	private MyRepositoryCommit repositoryCommit;
@@ -40,6 +40,7 @@ public class MyUser  implements Serializable{
 
 	private boolean hireable;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
 
 	private int collaborators;
@@ -84,6 +85,11 @@ public class MyUser  implements Serializable{
 	private String url;
 //	TODO Avaliar necessidade do campo plan
 //	private UserPlan plan;
+	
+	public MyUser() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 	public MyUser(User user) {
 		if (user!=null) {
@@ -237,7 +243,7 @@ public class MyUser  implements Serializable{
 	/**
 	 * @return id
 	 */
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -245,7 +251,7 @@ public class MyUser  implements Serializable{
 	 * @param id
 	 * @return this user
 	 */
-	public MyUser setId(int id) {
+	public MyUser setId(Long id) {
 		this.id = id;
 		return this;
 	}

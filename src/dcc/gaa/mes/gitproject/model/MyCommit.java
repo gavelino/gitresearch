@@ -1,13 +1,10 @@
 package dcc.gaa.mes.gitproject.model;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,15 +12,13 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import org.eclipse.egit.github.core.Commit;
-
-//import org.eclipse.egit.github.core.Tree;
+@SuppressWarnings("serial")
 @Entity
 public class MyCommit implements Serializable{
 
 	@Id
-    @GeneratedValue(strategy =GenerationType.AUTO)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 	
 	@ManyToOne(cascade= {CascadeType.REFRESH})
 	private MyRepositoryCommit repositoryCommit;
@@ -47,15 +42,19 @@ public class MyCommit implements Serializable{
 	private String url;
 // TODO Avaliar necessidade desse atributo 
 //	private Tree tree;
+	
+	public MyCommit() {
+		super();
+	}
 
-	public MyCommit(Commit commit) {
+	public MyCommit(org.eclipse.egit.github.core.Commit commit) {
 		if (commit!=null) {
 			this.setAuthor(new MyCommitUser(commit.getAuthor()));
 			this.setCommitter(new MyCommitUser(commit.getCommitter()));
 			this.setCommentCount(commit.getCommentCount());
 			this.parents = new ArrayList<MyCommit>();
 			if (commit.getParents() != null) {
-				for (Commit parentCommit : commit.getParents()) {
+				for (org.eclipse.egit.github.core.Commit parentCommit : commit.getParents()) {
 					parents.add(new MyCommit(parentCommit));
 				}
 			}
@@ -67,13 +66,13 @@ public class MyCommit implements Serializable{
 	
 	
 
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 
 
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
