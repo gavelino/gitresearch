@@ -44,7 +44,7 @@ public class GitIssue implements Serializable {
 	@ManyToMany(cascade = { CascadeType.REFRESH })
 	private List<GitLabel> labels;
 	
-	@ManyToOne(cascade = { CascadeType.REFRESH })
+	@ManyToOne(cascade = { CascadeType.ALL })
 	private GitMilestone milestone;
 	
 	//TODO Revisar a necessidade de armazenar o objeto GitPullRequest em uma Issue
@@ -77,7 +77,9 @@ public class GitIssue implements Serializable {
 	public GitIssue(Issue issue, GitRepository gitRepository) {
 		if (issue !=null) {
 			this.setRepository(gitRepository);
-			this.setAssignee(new GitUser(issue.getAssignee()));
+			if (issue.getAssignee()!=null) {
+				this.setAssignee(new GitUser(issue.getAssignee()));
+			}
 			this.setBody(issue.getBody());
 			this.setBodyHtml(issue.getBodyHtml());
 			this.setBodyText(issue.getBodyText());
@@ -91,14 +93,18 @@ public class GitIssue implements Serializable {
 				labels.add(new GitLabel(label));
 			}
 			this.setLabels(labels);
-			this.setMilestone(new GitMilestone(issue.getMilestone()));
+			if (issue.getMilestone()!=null) {
+				this.setMilestone(new GitMilestone(issue.getMilestone()));
+			}
 			this.setNumber(issue.getNumber());
 			this.setPullRequest(issue.getPullRequest().toString());
 			this.setState(issue.getState());
 			this.setUpdatedAt(issue.getUpdatedAt());
 			this.setTitle(issue.getTitle());
 			this.setUrl(issue.getUrl());
-			this.setUser(new GitUser(issue.getUser()));
+			if (issue.getUser()!=null) {
+				this.setUser(new GitUser(issue.getUser()));
+			}
 		}
 		
 	}

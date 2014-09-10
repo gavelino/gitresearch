@@ -48,7 +48,9 @@ public class GitMilestone implements Serializable {
 		if (milestone!=null){
 			this.setClosedIssues(milestone.getClosedIssues());
 			this.setCreatedAt(milestone.getCreatedAt());
-			this.setCreator(new GitUser(milestone.getCreator()));
+			if (milestone.getCreator()!=null) {
+				this.setCreator(new GitUser(milestone.getCreator()));
+			}
 			this.setDescription(milestone.getDescription());
 			this.setDueOn(milestone.getDueOn());
 			this.setNumber(milestone.getNumber());

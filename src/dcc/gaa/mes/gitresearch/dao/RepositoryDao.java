@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import dcc.gaa.mes.gitresearch.model.GitCommit;
+import dcc.gaa.mes.gitresearch.model.GitIssue;
 import dcc.gaa.mes.gitresearch.model.GitRepository;
 import dcc.gaa.mes.gitresearch.model.GitRepositoryCommit;
 import dcc.gaa.mes.gitresearch.model.GitUser;
@@ -32,6 +33,18 @@ public class RepositoryDao extends GenericDAO<GitRepository> {
 				if(gc.getId() == null || this.em.find(GitCommit.class, gc.getId()) == null) {
 					this.em.persist(gc);
 				}
+			}
+		}
+		for (GitIssue issue : repository.getRepositoryIssues()) {
+			if(issue.getAssignee()!=null && this.em.find(GitUser.class, issue.getAssignee().getId()) == null) {
+				this.em.persist(issue.getAssignee());
+			}
+			
+			if(issue.getUser()!=null&&this.em.find(GitUser.class, issue.getUser().getId()) == null) {
+				this.em.persist(issue.getUser());
+			}
+			if(issue.getMilestone()!=null&&this.em.find(GitUser.class, issue.getMilestone().getCreator().getId()) == null) {
+				this.em.persist(issue.getMilestone().getCreator());
 			}
 		}
 	}
