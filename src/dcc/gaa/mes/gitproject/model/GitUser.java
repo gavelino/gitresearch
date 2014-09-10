@@ -1,7 +1,6 @@
 package dcc.gaa.mes.gitproject.model;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -76,33 +75,29 @@ public class GitUser implements Serializable {
 
 	public GitUser(User user) {
 		if (user != null) {
-			Method[] gettersAndSetters = user.getClass().getMethods();
-			for (int i = 0; i < gettersAndSetters.length; i++) {
-				String methodName = gettersAndSetters[i].getName();
-				try {
-					if (methodName.startsWith("get")
-							&& !methodName.equalsIgnoreCase("getPlan")
-							&& !methodName.equalsIgnoreCase("getClass")) {
-						this.getClass()
-								.getMethod(
-										methodName.replaceFirst("get", "set"),
-										gettersAndSetters[i].getReturnType())
-								.invoke(this,
-										gettersAndSetters[i].invoke(user, null));
-					} else if (methodName.startsWith("is")) {
-						this.getClass()
-								.getMethod(
-										methodName.replaceFirst("is", "set"),
-										gettersAndSetters[i].getReturnType())
-								.invoke(this,
-										gettersAndSetters[i].invoke(user, null));
-					}
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-			}
+			this.id = user.getId();
+			this.hireable = user.isHireable();
+			this.createdAt = user.getCreatedAt();
+			this.collaborators = user.getCollaborators();
+			this.diskUsage = user.getDiskUsage();
+			this.followers = user.getFollowers();
+			this.following = user.getFollowing();
+			this.ownedPrivateRepos = user.getOwnedPrivateRepos();
+			this.privateGists = user.getPrivateGists();
+			this.publicGists = user.getPublicGists();
+			this.publicRepos = user.getPublicRepos();
+			this.totalPrivateRepos = user.getTotalPrivateRepos();
+			this.avatarUrl = user.getAvatarUrl();
+			this.blog = user.getBlog();
+			this.company = user.getCompany();
+			this.email = user.getEmail();
+			this.gravatarId = user.getGravatarId();
+			this.htmlUrl = user.getHtmlUrl();
+			this.location = user.getLocation();
+			this.login = user.getLogin();
+			this.name = user.getName();
+			this.type = user.getType();
+			this.url = user.getUrl();
 		}
 	}
 
