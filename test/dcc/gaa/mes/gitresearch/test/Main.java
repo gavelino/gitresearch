@@ -1,4 +1,4 @@
-package dcc.gaa.mes.gitresearch;
+package dcc.gaa.mes.gitresearch.test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +23,7 @@ import com.google.inject.Module;
 import com.google.inject.persist.PersistService;
 import com.google.inject.persist.jpa.JpaPersistModule;
 
+import dcc.gaa.mes.gitresearch.GitHubService;
 import dcc.gaa.mes.gitresearch.dao.RepositoryDao;
 import dcc.gaa.mes.gitresearch.model.GitRepository;
 import dcc.gaa.mes.gitresearch.model.GitRepositoryCommit;
