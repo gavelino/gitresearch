@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -24,7 +25,7 @@ public class GitRepositoryCommit implements Serializable {
 	@OneToOne(cascade = { CascadeType.ALL })
 	private GitCommitStats stats;
 
-	@OneToMany(cascade = { CascadeType.REFRESH }, mappedBy = "sha")
+	@OneToMany(cascade = { CascadeType.ALL })
 	private List<GitCommit> parents;
 
 	@OneToMany(cascade = { CascadeType.ALL })
@@ -35,10 +36,10 @@ public class GitRepositoryCommit implements Serializable {
 
 	private String url;
 
-	@OneToOne(cascade = { CascadeType.REFRESH }, mappedBy = "repositoryCommit")
+	@ManyToOne(cascade = { CascadeType.ALL })
 	private GitUser author;
 
-	@OneToOne(cascade = { CascadeType.REFRESH }, mappedBy = "repositoryCommit")
+	@ManyToOne(cascade = { CascadeType.ALL })
 	private GitUser committer;
 
 	public GitRepositoryCommit() {

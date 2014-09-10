@@ -4,10 +4,8 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -22,10 +20,7 @@ public class GitUser implements Serializable {
 	public static final String TYPE_ORG = "Organization"; //$NON-NLS-1$
 
 	@Id
-	private int id;
-
-	@OneToOne(cascade = { CascadeType.REFRESH })
-	private GitRepositoryCommit repositoryCommit;
+	private Integer id;
 
 	private boolean hireable;
 
@@ -109,14 +104,6 @@ public class GitUser implements Serializable {
 
 			}
 		}
-	}
-
-	public GitRepositoryCommit getRepositoryCommit() {
-		return repositoryCommit;
-	}
-
-	public void setRepositoryCommit(GitRepositoryCommit repositoryCommit) {
-		this.repositoryCommit = repositoryCommit;
 	}
 
 	/**
@@ -218,7 +205,7 @@ public class GitUser implements Serializable {
 	/**
 	 * @return id
 	 */
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 

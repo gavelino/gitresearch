@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -21,6 +22,7 @@ import org.eclipse.egit.github.core.util.DateUtils;
 public class GitRepository implements Serializable {
 
 	@Id
+	@Column(name = "id")
 	private String id;
 
 	private boolean fork;

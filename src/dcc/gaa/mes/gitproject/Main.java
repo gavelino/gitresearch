@@ -52,7 +52,6 @@ public class Main {
 			for (GitRepository repo : searchRepositories(params, 1, 10)) {
 				System.out.println(++i + " - " +repo);
 				repositoryDao.persist(repo);
-				
 			}
 			
             System.out.println("Successfully inserted");

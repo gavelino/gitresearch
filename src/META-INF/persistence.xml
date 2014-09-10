@@ -7,13 +7,13 @@
   
   	<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
    
-    <class>dcc.gaa.mes.gitproject.model.MyCommit</class>
-    <class>dcc.gaa.mes.gitproject.model.MyCommitFile</class>
-    <class>dcc.gaa.mes.gitproject.model.MyCommitStats</class>
-    <class>dcc.gaa.mes.gitproject.model.MyCommitUser</class>
-    <class>dcc.gaa.mes.gitproject.model.MyRepositoryCommit</class>
-    <class>dcc.gaa.mes.gitproject.model.MySearchRepository</class>
-    <class>dcc.gaa.mes.gitproject.model.MyUser</class>
+    <class>dcc.gaa.mes.gitproject.model.GitCommit</class>
+    <class>dcc.gaa.mes.gitproject.model.GitCommitFile</class>
+    <class>dcc.gaa.mes.gitproject.model.GitCommitStats</class>
+    <class>dcc.gaa.mes.gitproject.model.GitCommitUser</class>
+    <class>dcc.gaa.mes.gitproject.model.GitRepositoryCommit</class>
+    <class>dcc.gaa.mes.gitproject.model.GitRepository</class>
+    <class>dcc.gaa.mes.gitproject.model.GitUser</class>
 
     <properties>
 		<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />

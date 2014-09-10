@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -15,6 +17,10 @@ import org.eclipse.egit.github.core.Commit;
 @SuppressWarnings("serial")
 @Entity
 public class GitCommit implements Serializable {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
 
 	@ManyToOne(cascade = { CascadeType.ALL })
 	private GitCommitUser author;
@@ -24,12 +30,11 @@ public class GitCommit implements Serializable {
 
 	private int commentCount;
 
-	@OneToMany(cascade = { CascadeType.REFRESH })
+	@OneToMany(cascade = { CascadeType.ALL })
 	private List<GitCommit> parents;
 
 	private String message;
 
-	@Id
 	private String sha;
 
 	private String url;

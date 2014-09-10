@@ -12,6 +12,7 @@ import org.eclipse.egit.github.core.CommitFile;
 @SuppressWarnings("serial")
 @Entity
 public class GitCommitFile implements Serializable {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
