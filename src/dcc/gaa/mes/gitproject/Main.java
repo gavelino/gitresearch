@@ -14,6 +14,7 @@ import org.eclipse.egit.github.core.RepositoryCommit;
 import org.eclipse.egit.github.core.SearchRepository;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.CommitService;
+import org.eclipse.egit.github.core.service.IssueService;
 import org.eclipse.egit.github.core.service.RepositoryService;
 
 import com.google.inject.Guice;
@@ -34,6 +35,8 @@ public class Main {
 	
 	private PersistService persistService; 
 	
+	private GitHubService gitHubservice;
+	
 	@Inject 
 	public Main(PersistService service) {
 		this.persistService = service;
@@ -41,6 +44,9 @@ public class Main {
 	}
 	
 	public void init() {
+		GitHubClient client = new GitHubClient();
+		client.setOAuth2Token("fea785517975ea8eefd192926a03c16ffb489748");
+		gitHubservice = new GitHubService(client);
 //		searchRepositories = repositoryService.searchRepositories(keyword, JAVA_LANGUAGE, initPage++);
 		HashMap<String, String>params = new HashMap<String, String>();
 		params.put("language", "java");
@@ -49,9 +55,9 @@ public class Main {
 //		params.put("stars", ">=20000");
 		try {
 			int i = 0;
-			for (GitRepository repo : searchRepositories(params, 1, 10)) {
+			for (GitRepository repo : gitHubservice.searchRepositories(params, 1, 10)) {
 				System.out.println(++i + " - " +repo);
-				repositoryDao.persist(repo);
+				//repositoryDao.persist(repo);
 			}
 			
             System.out.println("Successfully inserted");
@@ -63,37 +69,9 @@ public class Main {
 	
 	
 	
-	public static List<GitRepository> searchRepositories(Map<String, String> params, int startPage, int endPage) throws IOException {
-		GitHubClient client = new GitHubClient();
-		client.setOAuth2Token("fea785517975ea8eefd192926a03c16ffb489748");
-		
-		RepositoryService repositoryService = new RepositoryService(client);
-		CommitService commitService = new CommitService(client);
-
-		List<SearchRepository> searchRepositories = new LinkedList<SearchRepository>();
-		List<GitRepository> repositories = new LinkedList<GitRepository>();
-
-		int initPage = startPage;
-		do {
-					
-			searchRepositories = repositoryService.searchRepositories(params, initPage++);
-			for (SearchRepository searchRepository : searchRepositories) {
-				GitRepository searchRep = new GitRepository(searchRepository);
-				List<RepositoryCommit> repCommit = commitService.getCommits(searchRepository);
-				List<GitRepositoryCommit> myRepCommit = new ArrayList<GitRepositoryCommit>();
-				for (RepositoryCommit repositoryCommit : repCommit) {
-					myRepCommit.add(new GitRepositoryCommit(repositoryCommit));
-				}
-				searchRep.setRepositoryCommits(myRepCommit);
-				searchRep.setCommits(commitService.getCommits(searchRepository).size());
-				repositories.add(searchRep);				
-			}
-
-		} while (searchRepositories.size() > 0 && initPage <= endPage);
-
-		
-		return repositories;
-	}
+	
+	
+	
 	
 	@Override
 	protected void finalize() throws Throwable {
