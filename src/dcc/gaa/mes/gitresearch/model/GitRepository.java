@@ -22,7 +22,6 @@ import org.eclipse.egit.github.core.util.DateUtils;
 public class GitRepository implements Serializable {
 
 	@Id
-	@Column(name = "id")
 	private String id;
 
 	private boolean fork;

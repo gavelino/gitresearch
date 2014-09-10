@@ -41,17 +41,22 @@ public class GitMilestone implements Serializable {
 	@ManyToOne(cascade = { CascadeType.REFRESH })
 	private GitUser creator;
 	
+	public GitMilestone() {
+	}
+	
 	public GitMilestone(Milestone milestone) {
-		this.setClosedIssues(milestone.getClosedIssues());
-		this.setCreatedAt(milestone.getCreatedAt());
-		this.setCreator(new GitUser(milestone.getCreator()));
-		this.setDescription(milestone.getDescription());
-		this.setDueOn(milestone.getDueOn());
-		this.setNumber(milestone.getNumber());
-		this.setOpenIssues(milestone.getOpenIssues());
-		this.setState(milestone.getState());
-		this.setTitle(milestone.getTitle());
-		this.setUrl(milestone.getUrl());
+		if (milestone!=null){
+			this.setClosedIssues(milestone.getClosedIssues());
+			this.setCreatedAt(milestone.getCreatedAt());
+			this.setCreator(new GitUser(milestone.getCreator()));
+			this.setDescription(milestone.getDescription());
+			this.setDueOn(milestone.getDueOn());
+			this.setNumber(milestone.getNumber());
+			this.setOpenIssues(milestone.getOpenIssues());
+			this.setState(milestone.getState());
+			this.setTitle(milestone.getTitle());
+			this.setUrl(milestone.getUrl());
+		}
 	}
 
 	/**

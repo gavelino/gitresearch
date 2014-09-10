@@ -18,10 +18,15 @@ public class GitLabel implements Serializable {
 	@Id
 	private String url;
 	
+	public GitLabel() {
+	}
+	
 	public GitLabel(Label label) {
-		this.setColor(label.getColor());
-		this.setName(label.getName());
-		this.setUrl(label.getUrl());
+		if (label !=null) {
+			this.setColor(label.getColor());
+			this.setName(label.getName());
+			this.setUrl(label.getUrl());
+		}
 	}
 
 	/**

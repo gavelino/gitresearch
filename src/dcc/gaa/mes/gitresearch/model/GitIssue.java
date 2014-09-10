@@ -12,6 +12,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.Label;
@@ -26,17 +28,20 @@ public class GitIssue implements Serializable {
 	@ManyToOne(cascade = { CascadeType.REFRESH })
 	private GitRepository repository;
 	
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date closedAt;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
 
 	private int comments;
 
 	private int number;
 
-	@ManyToMany(cascade = { CascadeType.ALL })
+	@ManyToMany(cascade = { CascadeType.REFRESH })
 	private List<GitLabel> labels;
 	
 	@ManyToOne(cascade = { CascadeType.REFRESH })
@@ -65,31 +70,36 @@ public class GitIssue implements Serializable {
 
 	@ManyToOne(cascade = { CascadeType.REFRESH })
 	private GitUser user;
+	
+	public GitIssue() {
+	}
 
-	public GitIssue(Issue issue) {
-		this.setAssignee(new GitUser(issue.getAssignee()));
-		this.setBody(issue.getBody());
-		this.setBodyHtml(issue.getBodyHtml());
-		this.setBodyText(issue.getBodyText());
-		this.setClosedAt(issue.getClosedAt());
-		this.setComments(issue.getComments());
-		this.setCreatedAt(issue.getCreatedAt());
-		this.setHtmlUrl(issue.getHtmlUrl());
-		this.setId(issue.getId());
-		List<GitLabel> labels = new ArrayList<GitLabel>();
-		for (Label label : issue.getLabels()) {
-			labels.add(new GitLabel(label));
+	public GitIssue(Issue issue, GitRepository gitRepository) {
+		if (issue !=null) {
+			this.setRepository(gitRepository);
+			this.setAssignee(new GitUser(issue.getAssignee()));
+			this.setBody(issue.getBody());
+			this.setBodyHtml(issue.getBodyHtml());
+			this.setBodyText(issue.getBodyText());
+			this.setClosedAt(issue.getClosedAt());
+			this.setComments(issue.getComments());
+			this.setCreatedAt(issue.getCreatedAt());
+			this.setHtmlUrl(issue.getHtmlUrl());
+			this.setId(issue.getId());
+			List<GitLabel> labels = new ArrayList<GitLabel>();
+			for (Label label : issue.getLabels()) {
+				labels.add(new GitLabel(label));
+			}
+			this.setLabels(labels);
+			this.setMilestone(new GitMilestone(issue.getMilestone()));
+			this.setNumber(issue.getNumber());
+			this.setPullRequest(issue.getPullRequest().toString());
+			this.setState(issue.getState());
+			this.setUpdatedAt(issue.getUpdatedAt());
+			this.setTitle(issue.getTitle());
+			this.setUrl(issue.getUrl());
+			this.setUser(new GitUser(issue.getUser()));
 		}
-		this.setLabels(labels);
-		this.setMilestone(new GitMilestone(issue.getMilestone()));
-		this.setNumber(issue.getNumber());
-		this.setPullRequest(issue.getPullRequest().toString());
-		
-		this.setState(issue.getState());
-		this.setUpdatedAt(issue.getUpdatedAt());
-		this.setTitle(issue.getTitle());
-		this.setUrl(issue.getUrl());
-		this.setUser(new GitUser(issue.getUser()));
 		
 	}
 	

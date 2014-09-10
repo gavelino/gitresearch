@@ -64,9 +64,9 @@ public class GitHubService {
 		List<Issue> issues =  issueService.getIssues (GitHubUtil.createFakeSearchRepository(gitRepository), issueFilter);
 		for (Issue issue : issues) {
 			System.out.println(issue);
-//			GitIssue gitIssue =  new GitIssue(issue, gitRepository);
+			GitIssue gitIssue =  new GitIssue(issue, gitRepository);
+			gitIssues.add(gitIssue);
 		}
-		//TODO transformar Issues em GitIssues e retornar a lista
 		return gitIssues;
 	}
 	
