@@ -1,14 +1,11 @@
 package dcc.gaa.mes.gitproject.model;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -19,24 +16,16 @@ import org.eclipse.egit.github.core.util.DateUtils;
 
 @SuppressWarnings("serial")
 @Entity
-public class MyUser  implements Serializable{
-	
-	@Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
-	
-	@OneToOne(cascade= {CascadeType.REFRESH})
-	private MyRepositoryCommit repositoryCommit;
-	
-	/**
-	 * TYPE_USER
-	 */
-	public static final String TYPE_USER = "User"; //$NON-NLS-1$
+public class GitUser implements Serializable {
 
-	/**
-	 * TYPE_ORG
-	 */
+	public static final String TYPE_USER = "User"; //$NON-NLS-1$
 	public static final String TYPE_ORG = "Organization"; //$NON-NLS-1$
+
+	@Id
+	private int id;
+
+	@OneToOne(cascade = { CascadeType.REFRESH })
+	private GitRepositoryCommit repositoryCommit;
 
 	private boolean hireable;
 
@@ -50,7 +39,6 @@ public class MyUser  implements Serializable{
 	private int followers;
 
 	private int following;
-
 
 	private int ownedPrivateRepos;
 
@@ -83,22 +71,23 @@ public class MyUser  implements Serializable{
 	private String type;
 
 	private String url;
-//	TODO Avaliar necessidade do campo plan
-//	private UserPlan plan;
-	
-	public MyUser() {
+
+	// TODO Avaliar necessidade do campo plan
+	// private UserPlan plan;
+
+	public GitUser() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public MyUser(User user) {
-		if (user!=null) {
+	public GitUser(User user) {
+		if (user != null) {
 			Method[] gettersAndSetters = user.getClass().getMethods();
 			for (int i = 0; i < gettersAndSetters.length; i++) {
 				String methodName = gettersAndSetters[i].getName();
 				try {
 					if (methodName.startsWith("get")
-							&& !methodName.equalsIgnoreCase("getPlan")&& !methodName.equalsIgnoreCase("getClass")) {
+							&& !methodName.equalsIgnoreCase("getPlan")
+							&& !methodName.equalsIgnoreCase("getClass")) {
 						this.getClass()
 								.getMethod(
 										methodName.replaceFirst("get", "set"),
@@ -121,17 +110,14 @@ public class MyUser  implements Serializable{
 			}
 		}
 	}
-	
-	
-	public MyRepositoryCommit getRepositoryCommit() {
+
+	public GitRepositoryCommit getRepositoryCommit() {
 		return repositoryCommit;
 	}
 
-
-	public void setRepositoryCommit(MyRepositoryCommit repositoryCommit) {
+	public void setRepositoryCommit(GitRepositoryCommit repositoryCommit) {
 		this.repositoryCommit = repositoryCommit;
 	}
-
 
 	/**
 	 * @return hireable
@@ -144,7 +130,7 @@ public class MyUser  implements Serializable{
 	 * @param hireable
 	 * @return this user
 	 */
-	public MyUser setHireable(boolean hireable) {
+	public GitUser setHireable(boolean hireable) {
 		this.hireable = hireable;
 		return this;
 	}
@@ -160,7 +146,7 @@ public class MyUser  implements Serializable{
 	 * @param createdAt
 	 * @return this user
 	 */
-	public MyUser setCreatedAt(Date createdAt) {
+	public GitUser setCreatedAt(Date createdAt) {
 		this.createdAt = DateUtils.clone(createdAt);
 		return this;
 	}
@@ -176,7 +162,7 @@ public class MyUser  implements Serializable{
 	 * @param collaborators
 	 * @return this user
 	 */
-	public MyUser setCollaborators(int collaborators) {
+	public GitUser setCollaborators(int collaborators) {
 		this.collaborators = collaborators;
 		return this;
 	}
@@ -192,7 +178,7 @@ public class MyUser  implements Serializable{
 	 * @param diskUsage
 	 * @return this user
 	 */
-	public MyUser setDiskUsage(int diskUsage) {
+	public GitUser setDiskUsage(int diskUsage) {
 		this.diskUsage = diskUsage;
 		return this;
 	}
@@ -208,7 +194,7 @@ public class MyUser  implements Serializable{
 	 * @param followers
 	 * @return this user
 	 */
-	public MyUser setFollowers(int followers) {
+	public GitUser setFollowers(int followers) {
 		this.followers = followers;
 		return this;
 	}
@@ -224,7 +210,7 @@ public class MyUser  implements Serializable{
 	 * @param following
 	 * @return this user
 	 */
-	public MyUser setFollowing(int following) {
+	public GitUser setFollowing(int following) {
 		this.following = following;
 		return this;
 	}
@@ -240,7 +226,7 @@ public class MyUser  implements Serializable{
 	 * @param id
 	 * @return this user
 	 */
-	public MyUser setId(int id) {
+	public GitUser setId(int id) {
 		this.id = id;
 		return this;
 	}
@@ -256,7 +242,7 @@ public class MyUser  implements Serializable{
 	 * @param ownedPrivateRepos
 	 * @return this user
 	 */
-	public MyUser setOwnedPrivateRepos(int ownedPrivateRepos) {
+	public GitUser setOwnedPrivateRepos(int ownedPrivateRepos) {
 		this.ownedPrivateRepos = ownedPrivateRepos;
 		return this;
 	}
@@ -272,7 +258,7 @@ public class MyUser  implements Serializable{
 	 * @param privateGists
 	 * @return this user
 	 */
-	public MyUser setPrivateGists(int privateGists) {
+	public GitUser setPrivateGists(int privateGists) {
 		this.privateGists = privateGists;
 		return this;
 	}
@@ -288,7 +274,7 @@ public class MyUser  implements Serializable{
 	 * @param publicGists
 	 * @return this user
 	 */
-	public MyUser setPublicGists(int publicGists) {
+	public GitUser setPublicGists(int publicGists) {
 		this.publicGists = publicGists;
 		return this;
 	}
@@ -304,7 +290,7 @@ public class MyUser  implements Serializable{
 	 * @param publicRepos
 	 * @return this user
 	 */
-	public MyUser setPublicRepos(int publicRepos) {
+	public GitUser setPublicRepos(int publicRepos) {
 		this.publicRepos = publicRepos;
 		return this;
 	}
@@ -320,7 +306,7 @@ public class MyUser  implements Serializable{
 	 * @param totalPrivateRepos
 	 * @return this user
 	 */
-	public MyUser setTotalPrivateRepos(int totalPrivateRepos) {
+	public GitUser setTotalPrivateRepos(int totalPrivateRepos) {
 		this.totalPrivateRepos = totalPrivateRepos;
 		return this;
 	}
@@ -336,7 +322,7 @@ public class MyUser  implements Serializable{
 	 * @param avatarUrl
 	 * @return this user
 	 */
-	public MyUser setAvatarUrl(String avatarUrl) {
+	public GitUser setAvatarUrl(String avatarUrl) {
 		this.avatarUrl = avatarUrl;
 		return this;
 	}
@@ -352,7 +338,7 @@ public class MyUser  implements Serializable{
 	 * @param blog
 	 * @return this user
 	 */
-	public MyUser setBlog(String blog) {
+	public GitUser setBlog(String blog) {
 		this.blog = blog;
 		return this;
 	}
@@ -368,7 +354,7 @@ public class MyUser  implements Serializable{
 	 * @param company
 	 * @return this user
 	 */
-	public MyUser setCompany(String company) {
+	public GitUser setCompany(String company) {
 		this.company = company;
 		return this;
 	}
@@ -384,7 +370,7 @@ public class MyUser  implements Serializable{
 	 * @param email
 	 * @return this user
 	 */
-	public MyUser setEmail(String email) {
+	public GitUser setEmail(String email) {
 		this.email = email;
 		return this;
 	}
@@ -400,7 +386,7 @@ public class MyUser  implements Serializable{
 	 * @param gravatarId
 	 * @return this user
 	 */
-	public MyUser setGravatarId(String gravatarId) {
+	public GitUser setGravatarId(String gravatarId) {
 		this.gravatarId = gravatarId;
 		return this;
 	}
@@ -416,7 +402,7 @@ public class MyUser  implements Serializable{
 	 * @param htmlUrl
 	 * @return this user
 	 */
-	public MyUser setHtmlUrl(String htmlUrl) {
+	public GitUser setHtmlUrl(String htmlUrl) {
 		this.htmlUrl = htmlUrl;
 		return this;
 	}
@@ -432,7 +418,7 @@ public class MyUser  implements Serializable{
 	 * @param location
 	 * @return this user
 	 */
-	public MyUser setLocation(String location) {
+	public GitUser setLocation(String location) {
 		this.location = location;
 		return this;
 	}
@@ -448,7 +434,7 @@ public class MyUser  implements Serializable{
 	 * @param login
 	 * @return this user
 	 */
-	public MyUser setLogin(String login) {
+	public GitUser setLogin(String login) {
 		this.login = login;
 		return this;
 	}
@@ -464,7 +450,7 @@ public class MyUser  implements Serializable{
 	 * @param name
 	 * @return this user
 	 */
-	public MyUser setName(String name) {
+	public GitUser setName(String name) {
 		this.name = name;
 		return this;
 	}
@@ -480,7 +466,7 @@ public class MyUser  implements Serializable{
 	 * @param type
 	 * @return this user
 	 */
-	public MyUser setType(String type) {
+	public GitUser setType(String type) {
 		this.type = type;
 		return this;
 	}
@@ -496,24 +482,24 @@ public class MyUser  implements Serializable{
 	 * @param url
 	 * @return this user
 	 */
-	public MyUser setUrl(String url) {
+	public GitUser setUrl(String url) {
 		this.url = url;
 		return this;
 	}
 
-//	/**
-//	 * @return plan
-//	 */
-//	public UserPlan getPlan() {
-//		return plan;
-//	}
-//
-//	/**
-//	 * @param plan
-//	 * @return this user
-//	 */
-//	public MyUser setPlan(UserPlan plan) {
-//		this.plan = plan;
-//		return this;
-//	}
+	// /**
+	// * @return plan
+	// */
+	// public UserPlan getPlan() {
+	// return plan;
+	// }
+	//
+	// /**
+	// * @param plan
+	// * @return this user
+	// */
+	// public MyUser setPlan(UserPlan plan) {
+	// this.plan = plan;
+	// return this;
+	// }
 }

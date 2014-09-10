@@ -23,8 +23,8 @@ import com.google.inject.persist.PersistService;
 import com.google.inject.persist.jpa.JpaPersistModule;
 
 import dcc.gaa.mes.gitproject.dao.RepositoryDao;
-import dcc.gaa.mes.gitproject.model.MyRepositoryCommit;
-import dcc.gaa.mes.gitproject.model.MySearchRepository;
+import dcc.gaa.mes.gitproject.model.GitRepositoryCommit;
+import dcc.gaa.mes.gitproject.model.GitRepository;
 import dcc.gaa.mes.gitproject.module.DaoModule;
 
 public class Main {
@@ -49,7 +49,7 @@ public class Main {
 //		params.put("stars", ">=20000");
 		try {
 			int i = 0;
-			for (MySearchRepository repo : searchRepositories(params, 1, 10)) {
+			for (GitRepository repo : searchRepositories(params, 1, 10)) {
 				System.out.println(++i + " - " +repo);
 				repositoryDao.persist(repo);
 				
@@ -64,7 +64,7 @@ public class Main {
 	
 	
 	
-	public static List<MySearchRepository> searchRepositories(Map<String, String> params, int startPage, int endPage) throws IOException {
+	public static List<GitRepository> searchRepositories(Map<String, String> params, int startPage, int endPage) throws IOException {
 		GitHubClient client = new GitHubClient();
 		client.setOAuth2Token("fea785517975ea8eefd192926a03c16ffb489748");
 		
@@ -72,18 +72,18 @@ public class Main {
 		CommitService commitService = new CommitService(client);
 
 		List<SearchRepository> searchRepositories = new LinkedList<SearchRepository>();
-		List<MySearchRepository> repositories = new LinkedList<MySearchRepository>();
+		List<GitRepository> repositories = new LinkedList<GitRepository>();
 
 		int initPage = startPage;
 		do {
 					
 			searchRepositories = repositoryService.searchRepositories(params, initPage++);
 			for (SearchRepository searchRepository : searchRepositories) {
-				MySearchRepository searchRep = new MySearchRepository(searchRepository);
+				GitRepository searchRep = new GitRepository(searchRepository);
 				List<RepositoryCommit> repCommit = commitService.getCommits(searchRepository);
-				List<MyRepositoryCommit> myRepCommit = new ArrayList<MyRepositoryCommit>();
+				List<GitRepositoryCommit> myRepCommit = new ArrayList<GitRepositoryCommit>();
 				for (RepositoryCommit repositoryCommit : repCommit) {
-					myRepCommit.add(new MyRepositoryCommit(repositoryCommit));
+					myRepCommit.add(new GitRepositoryCommit(repositoryCommit));
 				}
 				searchRep.setRepositoryCommits(myRepCommit);
 				searchRep.setCommits(commitService.getCommits(searchRepository).size());

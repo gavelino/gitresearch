@@ -8,8 +8,6 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
@@ -18,15 +16,12 @@ import javax.persistence.TemporalType;
 import org.eclipse.egit.github.core.SearchRepository;
 import org.eclipse.egit.github.core.util.DateUtils;
 
+@SuppressWarnings("serial")
 @Entity
-public class MySearchRepository implements Serializable {
-
-	/** serialVersionUID */
-	private static final long serialVersionUID = 978627174722864632L;
+public class GitRepository implements Serializable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private String id;
 
 	private boolean fork;
 	private boolean hasDownloads;
@@ -56,9 +51,9 @@ public class MySearchRepository implements Serializable {
 	private int commits;
 
 	@OneToMany(cascade = { CascadeType.ALL })
-	private List<MyRepositoryCommit> repositoryCommits;
-	
-	public MySearchRepository() {
+	private List<GitRepositoryCommit> repositoryCommits;
+
+	public GitRepository() {
 		super();
 	}
 
@@ -69,7 +64,7 @@ public class MySearchRepository implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	public MySearchRepository(SearchRepository searchRepository) {
+	public GitRepository(SearchRepository searchRepository) {
 		if (searchRepository != null) {
 			Method[] gettersAndSetters = searchRepository.getClass()
 					.getMethods();
@@ -98,11 +93,12 @@ public class MySearchRepository implements Serializable {
 
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					System.out.println("error method "+methodName);
+					System.out.println("error method " + methodName);
 					e.printStackTrace();
 				}
 
 			}
+			this.id = searchRepository.getId();
 		}
 	}
 
@@ -112,7 +108,7 @@ public class MySearchRepository implements Serializable {
 	 * @param owner
 	 * @param name
 	 */
-	public MySearchRepository(String owner, String name) {
+	public GitRepository(String owner, String name) {
 		if (owner == null)
 			throw new IllegalArgumentException("Owner cannot be null"); //$NON-NLS-1$
 		if (owner.length() == 0)
@@ -224,7 +220,7 @@ public class MySearchRepository implements Serializable {
 		return DateUtils.clone(pushedAt);
 	}
 
-	public List<MyRepositoryCommit> getRepositoryCommits() {
+	public List<GitRepositoryCommit> getRepositoryCommits() {
 		return repositoryCommits;
 	}
 
@@ -327,7 +323,7 @@ public class MySearchRepository implements Serializable {
 		this.homepage = homepage;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -355,7 +351,7 @@ public class MySearchRepository implements Serializable {
 		this.pushedAt = pushedAt;
 	}
 
-	public void setRepositoryCommits(List<MyRepositoryCommit> repositoryCommits) {
+	public void setRepositoryCommits(List<GitRepositoryCommit> repositoryCommits) {
 		this.repositoryCommits = repositoryCommits;
 	}
 

@@ -1,28 +1,21 @@
 package dcc.gaa.mes.gitproject.model;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 import org.eclipse.egit.github.core.CommitFile;
 
+@SuppressWarnings("serial")
 @Entity
-public class MyCommitFile  implements Serializable{
+public class GitCommitFile implements Serializable {
 	@Id
-    @GeneratedValue (strategy = GenerationType.AUTO)
-//    @Column(name="commit_file_id")
-    private Long id;
-	
-	@ManyToOne(cascade= {CascadeType.REFRESH})
-	private MyRepositoryCommit repositoryCommit;
-	
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+
 	private int additions;
 
 	private int changes;
@@ -40,56 +33,24 @@ public class MyCommitFile  implements Serializable{
 	private String sha;
 
 	private String status;
-	
-	public MyCommitFile() {
+
+	public GitCommitFile() {
 		super();
 	}
 
-	public MyCommitFile(CommitFile commitFile) {
-		if (commitFile!=null) {
-			Method[] gettersAndSetters = commitFile.getClass().getMethods();
-			for (int i = 0; i < gettersAndSetters.length; i++) {
-				String methodName = gettersAndSetters[i].getName();
-				try {
-					if (methodName.startsWith("get")
-							&& !methodName.equalsIgnoreCase("getClass")
-							&& !methodName.equalsIgnoreCase("getTree")) {
-						this.getClass()
-								.getMethod(
-										methodName.replaceFirst("get", "set"),
-										gettersAndSetters[i].getReturnType())
-								.invoke(this,
-										gettersAndSetters[i].invoke(commitFile,
-												null));
-					} else if (methodName.startsWith("is")) {
-						this.getClass()
-								.getMethod(
-										methodName.replaceFirst("is", "set"),
-										gettersAndSetters[i].getReturnType())
-								.invoke(this,
-										gettersAndSetters[i].invoke(commitFile,
-												null));
-					}
-
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-			}
+	public GitCommitFile(CommitFile commitFile) {
+		if (commitFile != null) {
+			this.additions = commitFile.getAdditions();
+			this.changes = commitFile.getChanges();
+			this.deletions = commitFile.getDeletions();
+			this.blobUrl = commitFile.getBlobUrl();
+			this.filename = commitFile.getFilename();
+			this.patch = commitFile.getPatch();
+			this.rawUrl = commitFile.getRawUrl();
+			this.sha = commitFile.getSha();
+			this.status = commitFile.getStatus();
 		}
 	}
-
-	
-	public MyRepositoryCommit getRepositoryCommit() {
-		return repositoryCommit;
-	}
-
-
-	public void setRepositoryCommit(MyRepositoryCommit repositoryCommit) {
-		this.repositoryCommit = repositoryCommit;
-	}
-
 
 	public Long getId() {
 		return id;
@@ -110,7 +71,7 @@ public class MyCommitFile  implements Serializable{
 	 * @param additions
 	 * @return this commit file
 	 */
-	public MyCommitFile setAdditions(int additions) {
+	public GitCommitFile setAdditions(int additions) {
 		this.additions = additions;
 		return this;
 	}
@@ -126,7 +87,7 @@ public class MyCommitFile  implements Serializable{
 	 * @param changes
 	 * @return this commit file
 	 */
-	public MyCommitFile setChanges(int changes) {
+	public GitCommitFile setChanges(int changes) {
 		this.changes = changes;
 		return this;
 	}
@@ -142,7 +103,7 @@ public class MyCommitFile  implements Serializable{
 	 * @param deletions
 	 * @return this commit file
 	 */
-	public MyCommitFile setDeletions(int deletions) {
+	public GitCommitFile setDeletions(int deletions) {
 		this.deletions = deletions;
 		return this;
 	}
@@ -158,7 +119,7 @@ public class MyCommitFile  implements Serializable{
 	 * @param blobUrl
 	 * @return this commit file
 	 */
-	public MyCommitFile setBlobUrl(String blobUrl) {
+	public GitCommitFile setBlobUrl(String blobUrl) {
 		this.blobUrl = blobUrl;
 		return this;
 	}
@@ -174,7 +135,7 @@ public class MyCommitFile  implements Serializable{
 	 * @param filename
 	 * @return this commit file
 	 */
-	public MyCommitFile setFilename(String filename) {
+	public GitCommitFile setFilename(String filename) {
 		this.filename = filename;
 		return this;
 	}
@@ -190,7 +151,7 @@ public class MyCommitFile  implements Serializable{
 	 * @param patch
 	 * @return this commit file
 	 */
-	public MyCommitFile setPatch(String patch) {
+	public GitCommitFile setPatch(String patch) {
 		this.patch = patch;
 		return this;
 	}
@@ -206,7 +167,7 @@ public class MyCommitFile  implements Serializable{
 	 * @param rawUrl
 	 * @return this commit file
 	 */
-	public MyCommitFile setRawUrl(String rawUrl) {
+	public GitCommitFile setRawUrl(String rawUrl) {
 		this.rawUrl = rawUrl;
 		return this;
 	}
@@ -222,7 +183,7 @@ public class MyCommitFile  implements Serializable{
 	 * @param sha
 	 * @return this commit file
 	 */
-	public MyCommitFile setSha(String sha) {
+	public GitCommitFile setSha(String sha) {
 		this.sha = sha;
 		return this;
 	}
@@ -238,7 +199,7 @@ public class MyCommitFile  implements Serializable{
 	 * @param status
 	 * @return this commit file
 	 */
-	public MyCommitFile setStatus(String status) {
+	public GitCommitFile setStatus(String status) {
 		this.status = status;
 		return this;
 	}
