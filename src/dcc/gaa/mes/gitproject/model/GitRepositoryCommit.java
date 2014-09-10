@@ -25,7 +25,7 @@ public class GitRepositoryCommit implements Serializable {
 	@OneToOne(cascade = { CascadeType.ALL })
 	private GitCommitStats stats;
 
-	@OneToMany(cascade = { CascadeType.ALL })
+	@OneToMany(cascade = { CascadeType.REFRESH })
 	private List<GitCommit> parents;
 
 	@OneToMany(cascade = { CascadeType.ALL })
@@ -36,10 +36,10 @@ public class GitRepositoryCommit implements Serializable {
 
 	private String url;
 
-	@ManyToOne(cascade = { CascadeType.ALL })
+	@ManyToOne(cascade = { CascadeType.REFRESH })
 	private GitUser author;
 
-	@ManyToOne(cascade = { CascadeType.ALL })
+	@ManyToOne(cascade = { CascadeType.REFRESH })
 	private GitUser committer;
 
 	public GitRepositoryCommit() {
