@@ -57,6 +57,7 @@ public class Main {
 			int i = 0;
 			for (GitRepository repo : gitHubservice.searchRepositories(params, 1, 10)) {
 				System.out.println(++i + " - " +repo);
+				gitHubservice.getAllIssues(repo);
 				//repositoryDao.persist(repo);
 			}
 			

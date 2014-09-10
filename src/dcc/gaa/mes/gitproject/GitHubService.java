@@ -19,6 +19,7 @@ import org.eclipse.egit.github.core.service.RepositoryService;
 import dcc.gaa.mes.gitproject.model.GitIssue;
 import dcc.gaa.mes.gitproject.model.GitRepository;
 import dcc.gaa.mes.gitproject.model.GitRepositoryCommit;
+import dcc.gaa.mes.gitproject.util.GitHubUtil;
 
 public class GitHubService {
 	GitHubClient client;
@@ -57,21 +58,21 @@ public class GitHubService {
 		return repositories;
 	}
 
-	public List<GitIssue> getIssues(Map<String, String> issueFilter, SearchRepository searchRepository) throws IOException{
+	public List<GitIssue> getIssues(Map<String, String> issueFilter, GitRepository gitRepository) throws IOException{
 		List<GitIssue> gitIssues = new ArrayList<GitIssue>();
 		IssueService issueService = new IssueService(client);
-		List<Issue> issues =  issueService.getIssues (searchRepository, issueFilter);
+		List<Issue> issues =  issueService.getIssues (GitHubUtil.createFakeSearchRepository(gitRepository), issueFilter);
 		for (Issue issue : issues) {
 			System.out.println(issue);
-//			GitIssue gitIssue =  new GitIssue(issue, )
+//			GitIssue gitIssue =  new GitIssue(issue, gitRepository);
 		}
 		//TODO transformar Issues em GitIssues e retornar a lista
 		return gitIssues;
 	}
 	
-	public List<GitIssue> getAllIssues(SearchRepository searchRepository) throws IOException{
+	public List<GitIssue> getAllIssues(GitRepository gitRepository) throws IOException{
 		Map<String, String> issueFilter= new HashMap<String, String>();
 		issueFilter.put("state", "all");
-		return getIssues(issueFilter, searchRepository);
+		return getIssues(issueFilter, gitRepository);
 	}
 }
