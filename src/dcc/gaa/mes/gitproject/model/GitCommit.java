@@ -30,7 +30,7 @@ public class GitCommit implements Serializable {
 
 	private int commentCount;
 
-	@OneToMany(cascade = { CascadeType.ALL })
+	@OneToMany(cascade = { CascadeType.REFRESH })
 	private List<GitCommit> parents;
 
 	private String message;
@@ -61,6 +61,14 @@ public class GitCommit implements Serializable {
 			this.setSha(commit.getSha());
 			this.setUrl(commit.getUrl());
 		}
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	/**
