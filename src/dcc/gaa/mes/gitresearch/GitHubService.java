@@ -1,4 +1,4 @@
-package dcc.gaa.mes.gitproject;
+package dcc.gaa.mes.gitresearch;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,10 +16,10 @@ import org.eclipse.egit.github.core.service.CommitService;
 import org.eclipse.egit.github.core.service.IssueService;
 import org.eclipse.egit.github.core.service.RepositoryService;
 
-import dcc.gaa.mes.gitproject.model.GitIssue;
-import dcc.gaa.mes.gitproject.model.GitRepository;
-import dcc.gaa.mes.gitproject.model.GitRepositoryCommit;
-import dcc.gaa.mes.gitproject.util.GitHubUtil;
+import dcc.gaa.mes.gitresearch.model.GitIssue;
+import dcc.gaa.mes.gitresearch.model.GitRepository;
+import dcc.gaa.mes.gitresearch.model.GitRepositoryCommit;
+import dcc.gaa.mes.gitresearch.util.GitHubUtil;
 
 public class GitHubService {
 	GitHubClient client;

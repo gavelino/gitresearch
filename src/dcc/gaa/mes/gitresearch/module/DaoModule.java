@@ -1,9 +1,9 @@
-package dcc.gaa.mes.gitproject.module;
+package dcc.gaa.mes.gitresearch.module;
 
 import com.google.inject.AbstractModule;
 
-import dcc.gaa.mes.gitproject.dao.RepositoryDao;
-import dcc.gaa.mes.gitproject.dao.UserDao;
+import dcc.gaa.mes.gitresearch.dao.RepositoryDao;
+import dcc.gaa.mes.gitresearch.dao.UserDao;
 
 public class DaoModule extends AbstractModule {
 

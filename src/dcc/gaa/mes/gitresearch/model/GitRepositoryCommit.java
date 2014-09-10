@@ -1,4 +1,4 @@
-package dcc.gaa.mes.gitproject.model;
+package dcc.gaa.mes.gitresearch.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;

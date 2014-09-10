@@ -1,9 +1,9 @@
-package dcc.gaa.mes.gitproject.dao;
+package dcc.gaa.mes.gitresearch.dao;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import dcc.gaa.mes.gitproject.model.GitUser;
+import dcc.gaa.mes.gitresearch.model.GitUser;
 
 public class UserDao extends GenericDAO<GitUser> {
 	

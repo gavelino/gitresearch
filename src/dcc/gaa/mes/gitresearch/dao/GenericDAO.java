@@ -1,4 +1,4 @@
-package dcc.gaa.mes.gitproject.dao;
+package dcc.gaa.mes.gitresearch.dao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;

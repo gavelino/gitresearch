@@ -1,4 +1,4 @@
-package dcc.gaa.mes.gitproject;
+package dcc.gaa.mes.gitresearch;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,10 +23,10 @@ import com.google.inject.Module;
 import com.google.inject.persist.PersistService;
 import com.google.inject.persist.jpa.JpaPersistModule;
 
-import dcc.gaa.mes.gitproject.dao.RepositoryDao;
-import dcc.gaa.mes.gitproject.model.GitRepositoryCommit;
-import dcc.gaa.mes.gitproject.model.GitRepository;
-import dcc.gaa.mes.gitproject.module.DaoModule;
+import dcc.gaa.mes.gitresearch.dao.RepositoryDao;
+import dcc.gaa.mes.gitresearch.model.GitRepository;
+import dcc.gaa.mes.gitresearch.model.GitRepositoryCommit;
+import dcc.gaa.mes.gitresearch.module.DaoModule;
 
 public class Main {
 
@@ -58,7 +58,7 @@ public class Main {
 			for (GitRepository repo : gitHubservice.searchRepositories(params, 1, 10)) {
 				System.out.println(++i + " - " +repo);
 				gitHubservice.getAllIssues(repo);
-				//repositoryDao.persist(repo);
+				repositoryDao.persist(repo);
 			}
 			
             System.out.println("Successfully inserted");

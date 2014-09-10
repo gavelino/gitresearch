@@ -1,8 +1,8 @@
-package dcc.gaa.mes.gitproject.util;
+package dcc.gaa.mes.gitresearch.util;
 
 import org.eclipse.egit.github.core.SearchRepository;
 
-import dcc.gaa.mes.gitproject.model.GitRepository;
+import dcc.gaa.mes.gitresearch.model.GitRepository;
 
 public class GitHubUtil {
 	public static SearchRepository createFakeSearchRepository(GitRepository gitRepository){

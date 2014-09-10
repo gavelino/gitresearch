@@ -1,4 +1,4 @@
-package dcc.gaa.mes.gitproject.util;
+package dcc.gaa.mes.gitresearch.util;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
