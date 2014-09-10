@@ -7,7 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.egit.github.core.Comment;
 import org.eclipse.egit.github.core.Issue;
+import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.RepositoryCommit;
 import org.eclipse.egit.github.core.RepositoryIssue;
 import org.eclipse.egit.github.core.SearchRepository;
@@ -61,10 +63,15 @@ public class GitHubService {
 	public List<GitIssue> getIssues(Map<String, String> issueFilter, GitRepository gitRepository) throws IOException{
 		List<GitIssue> gitIssues = new ArrayList<GitIssue>();
 		IssueService issueService = new IssueService(client);
-		List<Issue> issues =  issueService.getIssues (GitHubUtil.createFakeSearchRepository(gitRepository), issueFilter);
+		SearchRepository repository = GitHubUtil.createFakeSearchRepository(gitRepository);
+		List<Issue> issues =  issueService.getIssues (repository, issueFilter);
 		for (Issue issue : issues) {
 			System.out.println(issue);
 			GitIssue gitIssue =  new GitIssue(issue, gitRepository);
+			List<Comment> comments = issueService.getComments(repository.getOwner(),repository.getName(), issue.getNumber());
+			for (Comment comment : comments) {
+				System.out.println("-"+comment);
+			}
 			gitIssues.add(gitIssue);
 		}
 		return gitIssues;
