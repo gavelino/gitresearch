@@ -41,7 +41,7 @@ public class GitIssue implements Serializable {
 
 	private int number;
 
-	@ManyToMany(cascade = { CascadeType.REFRESH })
+	@ManyToMany(cascade = { CascadeType.ALL })
 	private List<GitLabel> labels;
 	
 	@ManyToOne(cascade = { CascadeType.ALL })
