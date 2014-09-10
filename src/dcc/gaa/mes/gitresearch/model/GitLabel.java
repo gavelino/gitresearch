@@ -2,6 +2,12 @@ package dcc.gaa.mes.gitresearch.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+import org.eclipse.egit.github.core.Label;
+
+@Entity
 @SuppressWarnings("serial")
 public class GitLabel implements Serializable {
 
@@ -9,7 +15,14 @@ public class GitLabel implements Serializable {
 
 	private String name;
 
+	@Id
 	private String url;
+	
+	public GitLabel(Label label) {
+		this.setColor(label.getColor());
+		this.setName(label.getName());
+		this.setUrl(label.getUrl());
+	}
 
 	/**
 	 * @see java.lang.Object#equals(java.lang.Object)

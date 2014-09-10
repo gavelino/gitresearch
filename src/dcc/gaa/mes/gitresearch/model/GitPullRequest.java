@@ -7,10 +7,8 @@ import org.eclipse.egit.github.core.Milestone;
 import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.util.DateUtils;
 
+@SuppressWarnings("serial")
 public class GitPullRequest implements Serializable {
-
-	/** serialVersionUID */
-	private static final long serialVersionUID = 7858604768525096763L;
 
 	private boolean mergeable;
 

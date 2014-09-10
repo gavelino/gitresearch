@@ -54,6 +54,9 @@ public class GitRepository implements Serializable {
 
 	@OneToMany(cascade = { CascadeType.ALL })
 	private List<GitRepositoryCommit> repositoryCommits;
+	
+	@OneToMany(cascade = { CascadeType.ALL })
+	private List<GitIssue> repositoryIssues;
 
 	public GitRepository() {
 		super();
@@ -122,6 +125,16 @@ public class GitRepository implements Serializable {
 
 		this.owner = owner;
 		this.name = name;
+	}
+
+	
+	
+	public List<GitIssue> getRepositoryIssues() {
+		return repositoryIssues;
+	}
+
+	public void setRepositoryIssues(List<GitIssue> repositoryIssues) {
+		this.repositoryIssues = repositoryIssues;
 	}
 
 	/**

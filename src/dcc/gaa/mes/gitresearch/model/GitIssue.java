@@ -5,20 +5,26 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.eclipse.egit.github.core.Label;
-import org.eclipse.egit.github.core.Milestone;
-import org.eclipse.egit.github.core.PullRequest;
-import org.eclipse.egit.github.core.Repository;
-import org.eclipse.egit.github.core.User;
-import org.eclipse.egit.github.core.util.DateUtils;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
+import org.eclipse.egit.github.core.Issue;
+import org.eclipse.egit.github.core.Label;
+import org.eclipse.egit.github.core.util.DateUtils;
+@Entity
 @SuppressWarnings("serial")
 public class GitIssue implements Serializable {
 
-
+	@Id
 	private long id;
 	
-	private Repository repository;
+	@ManyToOne(cascade = { CascadeType.REFRESH })
+	private GitRepository repository;
 	
 	private Date closedAt;
 
@@ -30,12 +36,16 @@ public class GitIssue implements Serializable {
 
 	private int number;
 
-	private List<Label> labels;
-
+	@ManyToMany(cascade = { CascadeType.ALL })
+	private List<GitLabel> labels;
+	
+	@ManyToOne(cascade = { CascadeType.REFRESH })
 	private GitMilestone milestone;
-
-	private GitPullRequest pullRequest;
-
+	
+	//TODO Revisar a necessidade de armazenar o objeto GitPullRequest em uma Issue
+//	private GitPullRequest pullRequest;
+	private String pullRequest;
+	
 	private String body;
 
 	private String bodyHtml;
@@ -50,10 +60,39 @@ public class GitIssue implements Serializable {
 
 	private String url;
 
-	private User assignee;
+	@ManyToOne(cascade = { CascadeType.REFRESH })
+	private GitUser assignee;
 
-	private User user;
+	@ManyToOne(cascade = { CascadeType.REFRESH })
+	private GitUser user;
 
+	public GitIssue(Issue issue) {
+		this.setAssignee(new GitUser(issue.getAssignee()));
+		this.setBody(issue.getBody());
+		this.setBodyHtml(issue.getBodyHtml());
+		this.setBodyText(issue.getBodyText());
+		this.setClosedAt(issue.getClosedAt());
+		this.setComments(issue.getComments());
+		this.setCreatedAt(issue.getCreatedAt());
+		this.setHtmlUrl(issue.getHtmlUrl());
+		this.setId(issue.getId());
+		List<GitLabel> labels = new ArrayList<GitLabel>();
+		for (Label label : issue.getLabels()) {
+			labels.add(new GitLabel(label));
+		}
+		this.setLabels(labels);
+		this.setMilestone(new GitMilestone(issue.getMilestone()));
+		this.setNumber(issue.getNumber());
+		this.setPullRequest(issue.getPullRequest().toString());
+		
+		this.setState(issue.getState());
+		this.setUpdatedAt(issue.getUpdatedAt());
+		this.setTitle(issue.getTitle());
+		this.setUrl(issue.getUrl());
+		this.setUser(new GitUser(issue.getUser()));
+		
+	}
+	
 	/**
 	 * @return closedAt
 	 */
@@ -137,7 +176,7 @@ public class GitIssue implements Serializable {
 	/**
 	 * @return labels
 	 */
-	public List<Label> getLabels() {
+	public List<GitLabel> getLabels() {
 		return labels;
 	}
 
@@ -145,8 +184,8 @@ public class GitIssue implements Serializable {
 	 * @param labels
 	 * @return this issue
 	 */
-	public GitIssue setLabels(List<Label> labels) {
-		this.labels = labels != null ? new ArrayList<Label>(labels) : null;
+	public GitIssue setLabels(List<GitLabel> labels) {
+		this.labels = labels != null ? new ArrayList<GitLabel>(labels) : null;
 		return this;
 	}
 
@@ -169,7 +208,7 @@ public class GitIssue implements Serializable {
 	/**
 	 * @return pullRequest
 	 */
-	public GitPullRequest getPullRequest() {
+	public String getPullRequest() {
 		return pullRequest;
 	}
 
@@ -177,7 +216,7 @@ public class GitIssue implements Serializable {
 	 * @param pullRequest
 	 * @return this issue
 	 */
-	public GitIssue setPullRequest(GitPullRequest pullRequest) {
+	public GitIssue setPullRequest(String pullRequest) {
 		this.pullRequest = pullRequest;
 		return this;
 	}
@@ -297,7 +336,7 @@ public class GitIssue implements Serializable {
 	/**
 	 * @return assignee
 	 */
-	public User getAssignee() {
+	public GitUser getAssignee() {
 		return assignee;
 	}
 
@@ -305,7 +344,7 @@ public class GitIssue implements Serializable {
 	 * @param assignee
 	 * @return this issue
 	 */
-	public GitIssue setAssignee(User assignee) {
+	public GitIssue setAssignee(GitUser assignee) {
 		this.assignee = assignee;
 		return this;
 	}
@@ -313,7 +352,7 @@ public class GitIssue implements Serializable {
 	/**
 	 * @return user
 	 */
-	public User getUser() {
+	public GitUser getUser() {
 		return user;
 	}
 
@@ -321,7 +360,7 @@ public class GitIssue implements Serializable {
 	 * @param user
 	 * @return this issue
 	 */
-	public GitIssue setUser(User user) {
+	public GitIssue setUser(GitUser user) {
 		this.user = user;
 		return this;
 	}
@@ -347,11 +386,11 @@ public class GitIssue implements Serializable {
 		return "Issue " + number; //$NON-NLS-1$
 	}
 
-	public Repository getRepository() {
+	public GitRepository getRepository() {
 		return repository;
 	}
 
-	public void setRepository(Repository repository) {
+	public void setRepository(GitRepository repository) {
 		this.repository = repository;
 	}
 

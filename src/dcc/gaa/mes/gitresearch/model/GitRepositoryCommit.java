@@ -63,6 +63,7 @@ public class GitRepositoryCommit implements Serializable {
 				}
 			}
 			this.setSha(repositoryCommit.getSha());
+			this.commit.setSha(this.getSha());
 			this.setUrl(repositoryCommit.getUrl());
 			this.setAuthor(new GitUser(repositoryCommit.getAuthor()));
 			this.setCommitter(new GitUser(repositoryCommit.getCommitter()));

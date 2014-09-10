@@ -3,14 +3,24 @@ package dcc.gaa.mes.gitresearch.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.eclipse.egit.github.core.Milestone;
 import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.util.DateUtils;
-
+@Entity
 @SuppressWarnings("serial")
 public class GitMilestone implements Serializable {
 
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
-
+	
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dueOn;
 
 	private int closedIssues;
@@ -25,9 +35,24 @@ public class GitMilestone implements Serializable {
 
 	private String title;
 
+	@Id
 	private String url;
 
-	private User creator;
+	@ManyToOne(cascade = { CascadeType.REFRESH })
+	private GitUser creator;
+	
+	public GitMilestone(Milestone milestone) {
+		this.setClosedIssues(milestone.getClosedIssues());
+		this.setCreatedAt(milestone.getCreatedAt());
+		this.setCreator(new GitUser(milestone.getCreator()));
+		this.setDescription(milestone.getDescription());
+		this.setDueOn(milestone.getDueOn());
+		this.setNumber(milestone.getNumber());
+		this.setOpenIssues(milestone.getOpenIssues());
+		this.setState(milestone.getState());
+		this.setTitle(milestone.getTitle());
+		this.setUrl(milestone.getUrl());
+	}
 
 	/**
 	 * @return createdAt
@@ -176,7 +201,7 @@ public class GitMilestone implements Serializable {
 	/**
 	 * @return creator
 	 */
-	public User getCreator() {
+	public GitUser getCreator() {
 		return creator;
 	}
 
@@ -184,7 +209,7 @@ public class GitMilestone implements Serializable {
 	 * @param creator
 	 * @return this milestone
 	 */
-	public GitMilestone setCreator(User creator) {
+	public GitMilestone setCreator(GitUser creator) {
 		this.creator = creator;
 		return this;
 	}
