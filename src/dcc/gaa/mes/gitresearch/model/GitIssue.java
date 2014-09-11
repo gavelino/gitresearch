@@ -41,10 +41,13 @@ public class GitIssue implements Serializable {
 
 	private int number;
 
-	@ManyToMany(cascade = { CascadeType.ALL })
+	@ManyToMany(cascade = { CascadeType.REFRESH })
+	private List<GitIssueEvent> events;
+
+	@ManyToMany(cascade = { CascadeType.REFRESH })
 	private List<GitLabel> labels;
 	
-	@ManyToOne(cascade = { CascadeType.ALL })
+	@ManyToOne(cascade = { CascadeType.REFRESH })
 	private GitMilestone milestone;
 	
 	//TODO Revisar a necessidade de armazenar o objeto GitPullRequest em uma Issue
@@ -70,6 +73,9 @@ public class GitIssue implements Serializable {
 
 	@ManyToOne(cascade = { CascadeType.REFRESH })
 	private GitUser user;
+	
+	@ManyToOne(cascade = { CascadeType.REFRESH })
+	private GitUser closedBy;
 	
 	public GitIssue() {
 	}
@@ -408,6 +414,22 @@ public class GitIssue implements Serializable {
 
 	public void setRepository(GitRepository repository) {
 		this.repository = repository;
+	}
+
+	public List<GitIssueEvent> getEvents() {
+		return events;
+	}
+
+	public void setEvents(List<GitIssueEvent> events) {
+		this.events = events;
+	}
+
+	public GitUser getClosedBy() {
+		return closedBy;
+	}
+
+	public void setClosedBy(GitUser closedBy) {
+		this.closedBy = closedBy;
 	}
 
 }

@@ -5,6 +5,8 @@ import javax.persistence.EntityManager;
 
 import dcc.gaa.mes.gitresearch.model.GitCommit;
 import dcc.gaa.mes.gitresearch.model.GitIssue;
+import dcc.gaa.mes.gitresearch.model.GitIssueEvent;
+import dcc.gaa.mes.gitresearch.model.GitLabel;
 import dcc.gaa.mes.gitresearch.model.GitRepository;
 import dcc.gaa.mes.gitresearch.model.GitRepositoryCommit;
 import dcc.gaa.mes.gitresearch.model.GitUser;
@@ -43,8 +45,26 @@ public class RepositoryDao extends GenericDAO<GitRepository> {
 			if(issue.getUser()!=null&&this.em.find(GitUser.class, issue.getUser().getId()) == null) {
 				this.em.persist(issue.getUser());
 			}
+			
+			if(issue.getClosedBy()!=null&&this.em.find(GitUser.class, issue.getClosedBy().getId()) == null) {
+				this.em.persist(issue.getClosedBy());
+			}
 			if(issue.getMilestone()!=null&&this.em.find(GitUser.class, issue.getMilestone().getCreator().getId()) == null) {
 				this.em.persist(issue.getMilestone().getCreator());
+			}
+			if (issue.getLabels()!=null) {
+				for (GitLabel gl : issue.getLabels()) {
+					if (gl.getUrl() != null && this.em.find(GitLabel.class, gl.getUrl()) == null) {
+						this.em.persist(gl);
+					}
+				}
+			}
+			if (issue.getEvents()!=null) {
+				for (GitIssueEvent gie : issue.getEvents()) {
+					if (this.em.find(GitIssueEvent.class, gie.getId()) == null) {
+						this.em.persist(gie);
+					}
+				}
 			}
 		}
 	}
