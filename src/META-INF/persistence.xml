@@ -18,6 +18,7 @@
     <class>dcc.gaa.mes.gitresearch.model.GitLabel</class>
     <class>dcc.gaa.mes.gitresearch.model.GitMilestone</class>
     <class>dcc.gaa.mes.gitresearch.model.GitIssueEvent</class>
+    <class>dcc.gaa.mes.gitresearch.model.GitResearch</class>
 
     <properties>
 		<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />

@@ -25,15 +25,17 @@ import com.google.inject.persist.jpa.JpaPersistModule;
 
 import dcc.gaa.mes.gitresearch.GitHubService;
 import dcc.gaa.mes.gitresearch.dao.RepositoryDao;
+import dcc.gaa.mes.gitresearch.dao.ResearchDAO;
 import dcc.gaa.mes.gitresearch.model.GitIssue;
 import dcc.gaa.mes.gitresearch.model.GitRepository;
 import dcc.gaa.mes.gitresearch.model.GitRepositoryCommit;
+import dcc.gaa.mes.gitresearch.model.GitResearch;
 import dcc.gaa.mes.gitresearch.module.DaoModule;
 
 public class Main {
 
 	@Inject
-	private RepositoryDao repositoryDao;
+	private ResearchDAO researchDao;
 	
 	private PersistService persistService; 
 	
@@ -57,12 +59,15 @@ public class Main {
 //		params.put("stars", ">=20000");
 		try {
 			int i = 0;
+			List<GitRepository> repositories = new ArrayList<GitRepository>();
 			for (GitRepository repo : gitHubservice.searchRepositories(params, 1, 10)) {
 				System.out.println(++i + " - " +repo);
 				List<GitIssue> issues = gitHubservice.getAllIssues(repo);
 				repo.setRepositoryIssues(issues);
-				repositoryDao.persist(repo);
+				repositories.add(repo);
 			}
+			GitResearch research = new GitResearch(params, repositories);
+			researchDao.persist(research);
 			
             System.out.println("Successfully inserted");
 		} catch (IOException e) {
