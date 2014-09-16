@@ -1,11 +1,14 @@
 package dcc.gaa.mes.gitresearch.test;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -13,6 +16,7 @@ import javax.inject.Inject;
 import org.eclipse.egit.github.core.RepositoryCommit;
 import org.eclipse.egit.github.core.SearchRepository;
 import org.eclipse.egit.github.core.client.GitHubClient;
+import org.eclipse.egit.github.core.client.GitHubRequest;
 import org.eclipse.egit.github.core.service.CommitService;
 import org.eclipse.egit.github.core.service.IssueService;
 import org.eclipse.egit.github.core.service.RepositoryService;
@@ -48,15 +52,38 @@ public class Main {
 	}
 	
 	public void init() {
+		Queue<GitHubClient> clients = new LinkedList<GitHubClient>();
+		
+//		MyGitHubClient myClient = new MyGitHubClient();
+//		myClient.setOAuth2Token("4999affe50d647fb6127bba6fa5dd7a654da00ed");
+//		try {
+//			//URL url = new URL("https://api.github.com/gaavelino");
+//			myClient.updateRateLimits("https://api.github.com/rate_limit/?access_token=4999affe50d647fb6127bba6fa5dd7a654da00ed");
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+		
+		//User = gaavelino
 		GitHubClient client = new GitHubClient();
+		client.setOAuth2Token("4999affe50d647fb6127bba6fa5dd7a654da00ed");
+		clients.add(client);
+		//User = gavelino
+		client = new GitHubClient();
 		client.setOAuth2Token("fea785517975ea8eefd192926a03c16ffb489748");
-		gitHubservice = new GitHubService(client);
+		clients.add(client);
+		//User = hsborges
+		client = new GitHubClient();
+		client.setOAuth2Token("acebecaff6fbdc6213be4d478be01fc604066757");
+		clients.add(client);
+		
+		gitHubservice = new GitHubService(clients);
 //		searchRepositories = repositoryService.searchRepositories(keyword, JAVA_LANGUAGE, initPage++);
 		HashMap<String, String>params = new HashMap<String, String>();
-		params.put("language", "java");
-		params.put("user", "gavelino");
+		params.put("language", "ruby");
+//		params.put("user", "gavelino");
 //		params.put("forks", "<105");
-//		params.put("stars", ">=20000");
+		params.put("stars", ">=20000");
 		try {
 			int i = 0;
 			List<GitRepository> repositories = new ArrayList<GitRepository>();

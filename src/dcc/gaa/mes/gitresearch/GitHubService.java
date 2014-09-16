@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import org.eclipse.egit.github.core.Comment;
 import org.eclipse.egit.github.core.Issue;
@@ -15,6 +16,7 @@ import org.eclipse.egit.github.core.IssueEvent;
 import org.eclipse.egit.github.core.RepositoryCommit;
 import org.eclipse.egit.github.core.SearchRepository;
 import org.eclipse.egit.github.core.client.GitHubClient;
+import org.eclipse.egit.github.core.client.GitHubRequest;
 import org.eclipse.egit.github.core.client.PageIterator;
 import org.eclipse.egit.github.core.service.CommitService;
 import org.eclipse.egit.github.core.service.IssueService;
@@ -27,35 +29,67 @@ import dcc.gaa.mes.gitresearch.model.GitRepositoryCommit;
 import dcc.gaa.mes.gitresearch.util.GitHubUtil;
 
 public class GitHubService {
-	GitHubClient client;
-
+	private GitHubClient client;
+	private Queue<GitHubClient> clients;
+	private RepositoryService repositoryService;
+	private CommitService commitService;
+	private IssueService issueService;
+	
 	public GitHubService(GitHubClient client) {
+		this.clients = new LinkedList<GitHubClient>();
+		this.clients.add(client);
 		this.client = client;
 	}
+	public GitHubService(Queue<GitHubClient> clients) {
+		this.clients = clients;
+		this.client = clients.poll();
+		this.clients.add(this.client);
+	}
 
+	private RepositoryService getRepositoryService(){
+		if (this.repositoryService == null || this.getClient().getRemainingRequests()<1){
+			repositoryService = new RepositoryService(this.getClient());
+		}
+		return repositoryService;
+	}
 
+	private CommitService getCommitService(){
+		if (this.commitService == null || this.getClient().getRemainingRequests()<1){
+			commitService = new CommitService(this.getClient());
+		}
+		return commitService;
+	}
+
+	private IssueService getIssueService(){
+		if (this.issueService == null || this.getClient().getRemainingRequests()<1){
+			issueService = new IssueService(this.getClient());
+		}
+		return issueService;
+	}
+	
 	public List<GitRepository> searchRepositories(Map<String, String> params, int startPage, int endPage) throws IOException {
-		RepositoryService repositoryService = new RepositoryService(client);
-		CommitService commitService = new CommitService(client);
-
+		
 		List<SearchRepository> searchRepositories = new LinkedList<SearchRepository>();
 		List<GitRepository> repositories = new LinkedList<GitRepository>();
-
+		
+		
 		int initPage = startPage;
 		do {
-
-			searchRepositories = repositoryService.searchRepositories(params, initPage++);
+				
+			
+			searchRepositories = getRepositoryService().searchRepositories(params, initPage++);
+			
 			for (SearchRepository searchRepository : searchRepositories) {
 				GitRepository searchRep = new GitRepository(searchRepository);
-				List<RepositoryCommit> repCommit = commitService.getCommits(searchRepository);
-//				List<CommitComment> commitComments = commitService.getComments(searchRepository);
-//				commitComments.size();
+				
+				List<RepositoryCommit> repCommit = getCommitService().getCommits(searchRepository);
+			
 				List<GitRepositoryCommit> myRepCommit = new ArrayList<GitRepositoryCommit>();
 				for (RepositoryCommit repositoryCommit : repCommit) {
 					myRepCommit.add(new GitRepositoryCommit(repositoryCommit));
 				}
 				searchRep.setRepositoryCommits(myRepCommit);
-				searchRep.setCommits(commitService.getCommits(searchRepository).size());
+				searchRep.setCommits(getCommitService().getCommits(searchRepository).size());
 				repositories.add(searchRep);				
 			}
 
@@ -67,21 +101,23 @@ public class GitHubService {
 
 	public List<GitIssue> getIssues(Map<String, String> issueFilter, GitRepository gitRepository) throws IOException{
 		List<GitIssue> gitIssues = new ArrayList<GitIssue>();
-		IssueService issueService = new IssueService(client);
 		SearchRepository repository = GitHubUtil.createFakeSearchRepository(gitRepository);
-		List<Issue> issues =  issueService.getIssues (repository, issueFilter);
+		
+		
+		List<Issue> issues =  getIssueService().getIssues (repository, issueFilter);
+		
 		for (Issue issue : issues) {
 			System.out.println(issue);
-			PageIterator<IssueEvent> events =  issueService.pageIssueEvents(repository.getOwner(), repository.getName(), issue.getNumber());
+			PageIterator<IssueEvent> events =  getIssueService().pageIssueEvents(repository.getOwner(), repository.getName(), issue.getNumber());
 			GitIssue gitIssue =  new GitIssue(issue, gitRepository);
 			gitIssue.setEvents(getIssueEvents(events.iterator(), gitIssue));
-			List<Comment> comments = issueService.getComments(repository.getOwner(),repository.getName(), issue.getNumber());
+			List<Comment> comments = getIssueService().getComments(repository.getOwner(),repository.getName(), issue.getNumber());
 			for (Comment comment : comments) {
 				System.out.println("-"+comment);
 			}
 			gitIssues.add(gitIssue);
 			
-			issueService.pageIssueEvents(repository.getOwner(), repository.getName(), issue.getNumber());
+			getIssueService().pageIssueEvents(repository.getOwner(), repository.getName(), issue.getNumber());
 		}
 		return gitIssues;
 	}
@@ -102,5 +138,32 @@ public class GitHubService {
 		Map<String, String> issueFilter= new HashMap<String, String>();
 		issueFilter.put("state", "all");
 		return getIssues(issueFilter, gitRepository);
+	}
+	public GitHubClient getClient() {
+		if (client.getRemainingRequests()==-1)
+			return this.client;
+		if (client.getRemainingRequests()<1)
+			if (clients.peek().getRemainingRequests()>1){
+				this.client = clients.poll();
+				clients.add(this.client);
+				System.out.println("Cliente alterado");
+			}
+			else{
+				while (clients.peek().getRemainingRequests()<1)
+					try {
+						Thread.sleep(5000);
+						System.out.println("Aguardando novos limites de uso da API");
+//						try {
+//							this.client.get(new GitHubRequest());
+//						} catch (IOException e) {
+//							e.printStackTrace();
+//						}
+					} catch (InterruptedException ie) {
+						ie.printStackTrace();
+					}
+			}
+				
+		
+		return this.client;
 	}
 }
