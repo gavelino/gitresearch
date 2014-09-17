@@ -1,56 +1,26 @@
 package dcc.gaa.mes.gitresearch.test;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 
-import javax.inject.Inject;
-
-import org.eclipse.egit.github.core.RepositoryCommit;
-import org.eclipse.egit.github.core.SearchRepository;
 import org.eclipse.egit.github.core.client.GitHubClient;
-import org.eclipse.egit.github.core.client.GitHubRequest;
-import org.eclipse.egit.github.core.service.CommitService;
-import org.eclipse.egit.github.core.service.IssueService;
-import org.eclipse.egit.github.core.service.RepositoryService;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.inject.persist.PersistService;
-import com.google.inject.persist.jpa.JpaPersistModule;
 
 import dcc.gaa.mes.gitresearch.GitHubService;
 import dcc.gaa.mes.gitresearch.MyGitHubClient;
-import dcc.gaa.mes.gitresearch.dao.RepositoryDao;
 import dcc.gaa.mes.gitresearch.dao.ResearchDAO;
 import dcc.gaa.mes.gitresearch.model.GitIssue;
 import dcc.gaa.mes.gitresearch.model.GitRepository;
-import dcc.gaa.mes.gitresearch.model.GitRepositoryCommit;
 import dcc.gaa.mes.gitresearch.model.GitResearch;
-import dcc.gaa.mes.gitresearch.module.DaoModule;
 
 public class Main {
 
-	@Inject
-	private ResearchDAO researchDao;
-	
-	private PersistService persistService; 
+	private ResearchDAO researchDao ;
 	
 	private GitHubService gitHubservice;
-	
-	@Inject 
-	public Main(PersistService service) {
-		this.persistService = service;
-		service.start();
-	}
 	
 	public void init() {
 		Queue<GitHubClient> clients = new LinkedList<GitHubClient>();
@@ -83,11 +53,11 @@ public class Main {
 		gitHubservice = new GitHubService(new MyGitHubClient(clients, tokenMap));
 //		searchRepositories = repositoryService.searchRepositories(keyword, JAVA_LANGUAGE, initPage++);
 		HashMap<String, String>params = new HashMap<String, String>();
-//		params.put("language", "java");
-//		params.put("user", "gavelino");
+		params.put("language", "java");
+		params.put("user", "gavelino");
 //		params.put("forks", "<105");
-		params.put("language", "ruby");
-		params.put("stars", ">=20000");
+//		params.put("language", "ruby");
+//		params.put("stars", ">=20000");
 		try {
 			int i = 0;
 			List<GitRepository> repositories = new ArrayList<GitRepository>();
@@ -107,24 +77,7 @@ public class Main {
 		
 	}
 	
-	
-	
-	
-	
-	
-	
-	@Override
-	protected void finalize() throws Throwable {
-		persistService.stop();
-		super.finalize();
-	}
-	
 	public static void main(String[] args) {
-		Set<Module> modules = new HashSet<Module>();
-		modules.add(new JpaPersistModule("main"));
-		modules.add(new DaoModule());
-		
-		Injector injector = Guice.createInjector(modules);
-		injector.getInstance(Main.class).init();
+		new Main().init();
 	}
 }

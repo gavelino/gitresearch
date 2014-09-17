@@ -5,9 +5,11 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.client.GitHubRequest;
@@ -16,9 +18,30 @@ import org.eclipse.egit.github.core.client.GitHubResponse;
 import dcc.gaa.mes.gitresearch.util.GitHubUtil;
 
 public class MyGitHubClient extends GitHubClient{
+	
 	private Queue<GitHubClient> clients = new LinkedList<GitHubClient>();
+	private Map<GitHubClient, String> tokenMap = new HashMap<GitHubClient, String>();
 	private GitHubClient client;
-	private Map<GitHubClient, String> tokenMap;
+	
+	public MyGitHubClient() {
+		super();
+		this.client = clients.peek();
+	}
+	
+	public MyGitHubClient(Set<String> tokens) {
+		if (tokens.isEmpty()) {
+			this.clients.add(new GitHubClient());
+		} else {
+			for (String token : tokens) {
+				GitHubClient gitClient = new GitHubClient();
+				gitClient.setOAuth2Token(token);
+				this.tokenMap.put(gitClient, token);
+				this.clients.add(gitClient);
+			}
+		}
+		
+		this.client = clients.peek();
+	}
 	
 	public MyGitHubClient(Queue<GitHubClient> clients,  Map<GitHubClient, String> tokenMap) {
 		super();

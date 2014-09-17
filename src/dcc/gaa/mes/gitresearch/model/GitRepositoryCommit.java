@@ -18,6 +18,9 @@ import org.eclipse.egit.github.core.RepositoryCommit;
 @SuppressWarnings("serial")
 @Entity
 public class GitRepositoryCommit implements Serializable {
+	
+	@ManyToOne(cascade = {CascadeType.REFRESH})
+	private GitRepository repository;
 
 	@OneToOne(cascade = { CascadeType.ALL })
 	private GitCommit commit;
@@ -196,5 +199,13 @@ public class GitRepositoryCommit implements Serializable {
 	public GitRepositoryCommit setCommitter(GitUser committer) {
 		this.committer = committer;
 		return this;
+	}
+
+	public GitRepository getRepository() {
+		return repository;
+	}
+
+	public void setRepository(GitRepository repository) {
+		this.repository = repository;
 	}
 }

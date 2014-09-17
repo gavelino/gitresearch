@@ -3,23 +3,25 @@ package dcc.gaa.mes.gitresearch.dao;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
+import dcc.gaa.mes.gitresearch.util.HibernateUtil;
+
 abstract class GenericDAO<T> {
 	
-	private final EntityManager em;
+	protected final EntityManager em = HibernateUtil.getEntityManager();
 
-	public GenericDAO(EntityManager em) {
+	public GenericDAO() {
 		super();
-		this.em = em;
 	}
 	
 	public void persist(T o) {
-		EntityTransaction transaction = this.em.getTransaction();
+		EntityTransaction tx = this.em.getTransaction();
 		try {
-			transaction.begin();
+			tx.begin();
 			this.em.persist(o);
-			transaction.commit();
+			tx.commit();
 		} catch (RuntimeException e) {
-			transaction.rollback();
+			if(tx != null && tx.isActive()) 
+				tx.rollback();
 			throw e;
 		}
 	}
@@ -27,15 +29,24 @@ abstract class GenericDAO<T> {
 	public abstract T find(Object id);
 		
 	public void remove(T o) {
-		EntityTransaction transaction = this.em.getTransaction();
+		EntityTransaction tx = this.em.getTransaction();
 		try {
-			transaction.begin();
+			tx.begin();
 			this.em.remove(o);
-			transaction.commit();
+			tx.commit();
 		} catch (RuntimeException e) {
-			transaction.rollback();
+			if(tx != null && tx.isActive()) 
+				tx.rollback();
 			throw e;
 		}
 	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		this.em.close();
+		super.finalize();
+	}
+	
+	
 	
 }
