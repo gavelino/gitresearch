@@ -28,6 +28,7 @@ import com.google.inject.persist.PersistService;
 import com.google.inject.persist.jpa.JpaPersistModule;
 
 import dcc.gaa.mes.gitresearch.GitHubService;
+import dcc.gaa.mes.gitresearch.MyGitHubClient;
 import dcc.gaa.mes.gitresearch.dao.RepositoryDao;
 import dcc.gaa.mes.gitresearch.dao.ResearchDAO;
 import dcc.gaa.mes.gitresearch.model.GitIssue;
@@ -63,26 +64,29 @@ public class Main {
 //			// TODO Auto-generated catch block
 //			e1.printStackTrace();
 //		}
-		
+		Map<GitHubClient, String> tokenMap = new HashMap<GitHubClient, String>(); 
 		//User = gaavelino
 		GitHubClient client = new GitHubClient();
 		client.setOAuth2Token("4999affe50d647fb6127bba6fa5dd7a654da00ed");
 		clients.add(client);
+		tokenMap.put(client, "4999affe50d647fb6127bba6fa5dd7a654da00ed");
 		//User = gavelino
 		client = new GitHubClient();
 		client.setOAuth2Token("fea785517975ea8eefd192926a03c16ffb489748");
 		clients.add(client);
+		tokenMap.put(client, "fea785517975ea8eefd192926a03c16ffb489748");
 		//User = hsborges
 		client = new GitHubClient();
 		client.setOAuth2Token("acebecaff6fbdc6213be4d478be01fc604066757");
 		clients.add(client);
-		
-		gitHubservice = new GitHubService(clients);
+		tokenMap.put(client, "acebecaff6fbdc6213be4d478be01fc604066757");
+		gitHubservice = new GitHubService(new MyGitHubClient(clients, tokenMap));
 //		searchRepositories = repositoryService.searchRepositories(keyword, JAVA_LANGUAGE, initPage++);
 		HashMap<String, String>params = new HashMap<String, String>();
-		params.put("language", "ruby");
+//		params.put("language", "java");
 //		params.put("user", "gavelino");
 //		params.put("forks", "<105");
+		params.put("language", "ruby");
 		params.put("stars", ">=20000");
 		try {
 			int i = 0;

@@ -1,8 +1,10 @@
 package dcc.gaa.mes.gitresearch;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -29,42 +31,52 @@ import dcc.gaa.mes.gitresearch.model.GitRepositoryCommit;
 import dcc.gaa.mes.gitresearch.util.GitHubUtil;
 
 public class GitHubService {
-	private GitHubClient client;
-	private Queue<GitHubClient> clients;
+//	private GitHubClient client;
+//	private Queue<GitHubClient> clients;
 	private RepositoryService repositoryService;
 	private CommitService commitService;
 	private IssueService issueService;
+//	private Map<GitHubClient, String> tokenMap;
+	private MyGitHubClient myClient;
 	
-	public GitHubService(GitHubClient client) {
-		this.clients = new LinkedList<GitHubClient>();
-		this.clients.add(client);
-		this.client = client;
+//	public GitHubService(GitHubClient client, String token) {
+//		this.clients = new LinkedList<GitHubClient>();
+//		this.clients.add(client);
+//		this.client = client;
+//	}
+//	public GitHubService(Queue<GitHubClient> clients,  Map<GitHubClient, String> tokenMap) {
+//		this.clients = clients;
+//		this.client = clients.poll();
+//		this.clients.add(this.client);
+//		this.tokenMap = tokenMap;
+//	}
+	
+	public GitHubService(MyGitHubClient myClient) {
+		this.myClient = myClient;
 	}
-	public GitHubService(Queue<GitHubClient> clients) {
-		this.clients = clients;
-		this.client = clients.poll();
-		this.clients.add(this.client);
-	}
-
+	
 	private RepositoryService getRepositoryService(){
-		if (this.repositoryService == null || this.getClient().getRemainingRequests()<1){
-			repositoryService = new RepositoryService(this.getClient());
-		}
-		return repositoryService;
+//		if (this.repositoryService == null || this.getClient().getRemainingRequests()<1){
+//			repositoryService = new RepositoryService(this.getClient());
+//		}
+//		return repositoryService;
+		return new RepositoryService(myClient);
 	}
 
 	private CommitService getCommitService(){
-		if (this.commitService == null || this.getClient().getRemainingRequests()<1){
-			commitService = new CommitService(this.getClient());
-		}
-		return commitService;
+//		if (this.commitService == null || this.getClient().getRemainingRequests()<1){
+//			commitService = new CommitService(this.getClient());
+//		}
+//		return commitService;
+		return new CommitService(myClient);
 	}
 
 	private IssueService getIssueService(){
-		if (this.issueService == null || this.getClient().getRemainingRequests()<1){
-			issueService = new IssueService(this.getClient());
-		}
-		return issueService;
+//		if (this.issueService == null || this.getClient().getRemainingRequests()<1){
+//			issueService = new IssueService(this.getClient());
+//		}
+//		return issueService;
+		return new IssueService(myClient);
 	}
 	
 	public List<GitRepository> searchRepositories(Map<String, String> params, int startPage, int endPage) throws IOException {
@@ -139,31 +151,38 @@ public class GitHubService {
 		issueFilter.put("state", "all");
 		return getIssues(issueFilter, gitRepository);
 	}
-	public GitHubClient getClient() {
-		if (client.getRemainingRequests()==-1)
-			return this.client;
-		if (client.getRemainingRequests()<1)
-			if (clients.peek().getRemainingRequests()>1){
-				this.client = clients.poll();
-				clients.add(this.client);
-				System.out.println("Cliente alterado");
-			}
-			else{
-				while (clients.peek().getRemainingRequests()<1)
-					try {
-						Thread.sleep(5000);
-						System.out.println("Aguardando novos limites de uso da API");
-//						try {
-//							this.client.get(new GitHubRequest());
-//						} catch (IOException e) {
-//							e.printStackTrace();
-//						}
-					} catch (InterruptedException ie) {
-						ie.printStackTrace();
-					}
-			}
-				
-		
-		return this.client;
-	}
+//	public GitHubClient getClient() {
+//		if (client.getRemainingRequests()==-1)
+//			return this.client;
+//		if (client.getRemainingRequests()<1)
+//			if (clients.peek().getRemainingRequests()>1){
+//				this.client = clients.poll();
+//				clients.add(this.client);
+//				System.out.println("Cliente alterado");
+//			}
+//			else{
+//				if (clients.peek().getRemainingRequests()<1){
+//					
+//					try {
+//						Date resetDate = GitHubUtil.getResetTime(tokenMap.get(clients.peek()));
+//						long waitTime = resetDate.getTime() - new Date().getTime()+5000;
+//						
+//						SimpleDateFormat formata = new SimpleDateFormat("HH:mm:ss");
+//						System.out.println("Aguardando novos limites de uso da API");
+//						System.out.println("Time = " + formata.format(new Date()) + "    " + waitTime);
+//						Thread.sleep(waitTime);
+//						GitHubClient client = clients.poll();
+//						clients.add(client);
+//						return client;
+//					} catch (InterruptedException ie) {
+//						ie.printStackTrace();
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
+//				}
+//			}
+//				
+//		
+//		return this.client;
+//	}
 }
