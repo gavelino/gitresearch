@@ -5,13 +5,13 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.eclipse.egit.github.core.SearchRepository;
 
 import com.google.gson.JsonElement;
@@ -27,6 +27,8 @@ import dcc.gaa.mes.gitresearch.model.GitResearch;
 
 public class GitHubUtil {
 	
+	private static final Logger logger = Logger.getLogger(GitHubUtil.class);
+	
 	public static SearchRepository createFakeSearchRepository(GitRepository gitRepository){
 		SearchRepository searchRepository =  new SearchRepository(gitRepository.getOwner(), gitRepository.getName());
 		return searchRepository;
@@ -35,14 +37,18 @@ public class GitHubUtil {
 	public static void searchAndInsert(Set<String> tokens, HashMap<String, String> keywords) throws IOException {
 		GitHubService gitHubservice = new GitHubService(new MyGitHubClient(tokens));
 		
-		int i = 0;
-		List<GitRepository> repositories = new ArrayList<GitRepository>();
-		for (GitRepository repo : gitHubservice.searchRepositories(keywords, 1, 10)) {
-			System.out.println(++i + " - " +repo);
-			List<GitIssue> issues = gitHubservice.getAllIssues(repo);
-			repo.setRepositoryIssues(issues);
-			repositories.add(repo);
-		}
+		int page = 1;
+		List<GitRepository> repositories;
+		do {
+			repositories = gitHubservice.searchRepositories(keywords, page, page++);
+			for (int i = 0; i < repositories.size(); i++) {
+				GitRepository repo = repositories.get(i);
+				List<GitIssue> issues = gitHubservice.getAllIssues(repo);
+				repo.setRepositoryIssues(issues);
+				repositories.add(repo);
+			}
+		} while (repositories.size() == 100);
+		
 		GitResearch research = new GitResearch(keywords, repositories);
 		
 		new ResearchDAO().persist(research);
