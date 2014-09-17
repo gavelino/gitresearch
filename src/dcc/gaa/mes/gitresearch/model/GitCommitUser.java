@@ -11,7 +11,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.eclipse.egit.github.core.CommitUser;
-import org.eclipse.egit.github.core.util.DateUtils;
 
 /**
  * Commit user model class
@@ -51,51 +50,28 @@ public class GitCommitUser implements Serializable {
 		this.id = id;
 	}
 
-	/**
-	 * @return date
-	 */
 	public Date getDate() {
-		return DateUtils.clone(date);
+		return date;
 	}
 
-	/**
-	 * @param date
-	 * @return this commit user
-	 */
-	public GitCommitUser setDate(Date date) {
-		this.date = DateUtils.clone(date);
-		return this;
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
-	/**
-	 * @return email
-	 */
 	public String getEmail() {
 		return email;
 	}
 
-	/**
-	 * @param email
-	 * @return this commit user
-	 */
-	public GitCommitUser setEmail(String email) {
+	public void setEmail(String email) {
 		this.email = email;
-		return this;
 	}
 
-	/**
-	 * @return name
-	 */
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * @param name
-	 * @return this commit user
-	 */
-	public GitCommitUser setName(String name) {
+	public void setName(String name) {
 		this.name = name;
-		return this;
 	}
+
 }

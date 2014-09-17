@@ -48,18 +48,18 @@ public class GitCommit implements Serializable {
 
 	public GitCommit(Commit commit) {
 		if (commit != null) {
-			this.setAuthor(new GitCommitUser(commit.getAuthor()));
-			this.setCommitter(new GitCommitUser(commit.getCommitter()));
-			this.setCommentCount(commit.getCommentCount());
+			this.author = new GitCommitUser(commit.getAuthor());
+			this.committer = new GitCommitUser(commit.getCommitter());
+			this.commentCount = commit.getCommentCount();
 			this.parents = new ArrayList<GitCommit>();
 			if (commit.getParents() != null) {
 				for (Commit parentCommit : commit.getParents()) {
 					parents.add(new GitCommit(parentCommit));
 				}
 			}
-			this.setMessage(commit.getMessage());
-			this.setSha(commit.getSha());
-			this.setUrl(commit.getUrl());
+			this.message = commit.getMessage();
+			this.sha = commit.getSha();
+			this.url = commit.getUrl();
 		}
 	}
 
@@ -71,131 +71,65 @@ public class GitCommit implements Serializable {
 		this.id = id;
 	}
 
-	/**
-	 * @return author
-	 */
 	public GitCommitUser getAuthor() {
 		return author;
 	}
 
-	/**
-	 * @param author
-	 * @return this commit
-	 */
-	public GitCommit setAuthor(GitCommitUser author) {
+	public void setAuthor(GitCommitUser author) {
 		this.author = author;
-		return this;
 	}
 
-	/**
-	 * @return committer
-	 */
 	public GitCommitUser getCommitter() {
 		return committer;
 	}
 
-	/**
-	 * @param committer
-	 * @return this commit
-	 */
-	public GitCommit setCommitter(GitCommitUser committer) {
+	public void setCommitter(GitCommitUser committer) {
 		this.committer = committer;
-		return this;
 	}
 
-	/**
-	 * @return commentCount
-	 */
 	public int getCommentCount() {
 		return commentCount;
 	}
 
-	/**
-	 * @param commentCount
-	 * @return this commit
-	 */
-	public GitCommit setCommentCount(int commentCount) {
+	public void setCommentCount(int commentCount) {
 		this.commentCount = commentCount;
-		return this;
 	}
 
-	/**
-	 * @return parents
-	 */
 	public List<GitCommit> getParents() {
 		return parents;
 	}
 
-	/**
-	 * @param parents
-	 * @return this commit
-	 */
-	public GitCommit setParents(List<GitCommit> parents) {
+	public void setParents(List<GitCommit> parents) {
 		this.parents = parents;
-		return this;
 	}
 
-	/**
-	 * @return message
-	 */
 	public String getMessage() {
 		return message;
 	}
 
-	/**
-	 * @param message
-	 * @return this commit
-	 */
-	public GitCommit setMessage(String message) {
+	public void setMessage(String message) {
 		this.message = message;
-		return this;
 	}
 
-	/**
-	 * @return sha
-	 */
 	public String getSha() {
 		return sha;
 	}
 
-	/**
-	 * @param sha
-	 * @return this commit
-	 */
-	public GitCommit setSha(String sha) {
+	public void setSha(String sha) {
 		this.sha = sha;
-		return this;
 	}
 
-	/**
-	 * @return url
-	 */
 	public String getUrl() {
 		return url;
 	}
 
-	/**
-	 * @param url
-	 * @return this commit
-	 */
-	public GitCommit setUrl(String url) {
+	public void setUrl(String url) {
 		this.url = url;
-		return this;
 	}
 
-	// /**
-	// * @return tree
-	// */
-	// public Tree getTree() {
-	// return tree;
-	// }
-	//
-	// /**
-	// * @param tree
-	// * @return this commit
-	// */
-	// public MyCommit setTree(Tree tree) {
-	// this.tree = tree;
-	// return this;
-	// }
+	@Override
+	public String toString() {
+		return "GitCommit [id=" + id + ", sha=" + sha + "]";
+	}
+	
 }

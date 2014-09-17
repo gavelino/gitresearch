@@ -10,24 +10,22 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.Label;
-import org.eclipse.egit.github.core.util.DateUtils;
+
 @Entity
 @SuppressWarnings("serial")
 public class GitIssue implements Serializable {
 
 	@Id
 	private long id;
-	
+
 	@ManyToOne(cascade = { CascadeType.REFRESH })
 	private GitRepository repository;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date closedAt;
 
@@ -46,14 +44,15 @@ public class GitIssue implements Serializable {
 
 	@ManyToMany(cascade = { CascadeType.REFRESH })
 	private List<GitLabel> labels;
-	
+
 	@ManyToOne(cascade = { CascadeType.REFRESH })
 	private GitMilestone milestone;
-	
-	//TODO Revisar a necessidade de armazenar o objeto GitPullRequest em uma Issue
-//	private GitPullRequest pullRequest;
+
+	// TODO Revisar a necessidade de armazenar o objeto GitPullRequest em uma
+	// Issue
+	// private GitPullRequest pullRequest;
 	private String pullRequest;
-	
+
 	private String body;
 
 	private String bodyHtml;
@@ -73,339 +72,62 @@ public class GitIssue implements Serializable {
 
 	@ManyToOne(cascade = { CascadeType.REFRESH })
 	private GitUser user;
-	
+
 	@ManyToOne(cascade = { CascadeType.REFRESH })
 	private GitUser closedBy;
-	
+
 	public GitIssue() {
+		super();
 	}
 
 	public GitIssue(Issue issue, GitRepository gitRepository) {
-		if (issue !=null) {
-			this.setRepository(gitRepository);
-			if (issue.getAssignee()!=null) {
-				this.setAssignee(new GitUser(issue.getAssignee()));
+		if (issue != null) {
+			this.repository = gitRepository;
+
+			if (issue.getAssignee() != null) {
+				this.assignee = new GitUser(issue.getAssignee());
 			}
-			this.setBody(issue.getBody());
-			this.setBodyHtml(issue.getBodyHtml());
-			this.setBodyText(issue.getBodyText());
-			this.setClosedAt(issue.getClosedAt());
-			this.setComments(issue.getComments());
-			this.setCreatedAt(issue.getCreatedAt());
-			this.setHtmlUrl(issue.getHtmlUrl());
-			this.setId(issue.getId());
+
+			this.body = issue.getBody();
+			this.bodyHtml = issue.getBodyHtml();
+			this.bodyText = issue.getBodyText();
+			this.closedAt = issue.getClosedAt();
+			this.comments = issue.getComments();
+			this.createdAt = issue.getCreatedAt();
+			this.htmlUrl = issue.getHtmlUrl();
+			this.id = issue.getId();
+
 			List<GitLabel> labels = new ArrayList<GitLabel>();
 			for (Label label : issue.getLabels()) {
 				labels.add(new GitLabel(label));
 			}
-			this.setLabels(labels);
-			if (issue.getMilestone()!=null) {
-				this.setMilestone(new GitMilestone(issue.getMilestone()));
+
+			this.labels = labels;
+
+			if (issue.getMilestone() != null) {
+				this.milestone = new GitMilestone(issue.getMilestone());
 			}
-			this.setNumber(issue.getNumber());
-			this.setPullRequest(issue.getPullRequest().toString());
-			this.setState(issue.getState());
-			this.setUpdatedAt(issue.getUpdatedAt());
-			this.setTitle(issue.getTitle());
-			this.setUrl(issue.getUrl());
-			if (issue.getUser()!=null) {
-				this.setUser(new GitUser(issue.getUser()));
+
+			this.number = issue.getNumber();
+			this.pullRequest = issue.getPullRequest().toString();
+			this.state = issue.getState();
+			this.updatedAt = issue.getUpdatedAt();
+			this.title = issue.getTitle();
+			this.url = issue.getUrl();
+
+			if (issue.getUser() != null) {
+				this.user = new GitUser(issue.getUser());
 			}
 		}
-		
-	}
-	
-	/**
-	 * @return closedAt
-	 */
-	public Date getClosedAt() {
-		return DateUtils.clone(closedAt);
+
 	}
 
-	/**
-	 * @param closedAt
-	 * @return this issue
-	 */
-	public GitIssue setClosedAt(Date closedAt) {
-		this.closedAt = DateUtils.clone(closedAt);
-		return this;
-	}
-
-	/**
-	 * @return createdAt
-	 */
-	public Date getCreatedAt() {
-		return DateUtils.clone(createdAt);
-	}
-
-	/**
-	 * @param createdAt
-	 * @return this issue
-	 */
-	public GitIssue setCreatedAt(Date createdAt) {
-		this.createdAt = DateUtils.clone(createdAt);
-		return this;
-	}
-
-	/**
-	 * @return updatedAt
-	 */
-	public Date getUpdatedAt() {
-		return DateUtils.clone(updatedAt);
-	}
-
-	/**
-	 * @param updatedAt
-	 * @return this issue
-	 */
-	public GitIssue setUpdatedAt(Date updatedAt) {
-		this.updatedAt = DateUtils.clone(updatedAt);
-		return this;
-	}
-
-	/**
-	 * @return comments
-	 */
-	public int getComments() {
-		return comments;
-	}
-
-	/**
-	 * @param comments
-	 * @return this issue
-	 */
-	public GitIssue setComments(int comments) {
-		this.comments = comments;
-		return this;
-	}
-
-	/**
-	 * @return number
-	 */
-	public int getNumber() {
-		return number;
-	}
-
-	/**
-	 * @param number
-	 * @return this issue
-	 */
-	public GitIssue setNumber(int number) {
-		this.number = number;
-		return this;
-	}
-
-	/**
-	 * @return labels
-	 */
-	public List<GitLabel> getLabels() {
-		return labels;
-	}
-
-	/**
-	 * @param labels
-	 * @return this issue
-	 */
-	public GitIssue setLabels(List<GitLabel> labels) {
-		this.labels = labels != null ? new ArrayList<GitLabel>(labels) : null;
-		return this;
-	}
-
-	/**
-	 * @return milestone
-	 */
-	public GitMilestone getMilestone() {
-		return milestone;
-	}
-
-	/**
-	 * @param milestone
-	 * @return this issue
-	 */
-	public GitIssue setMilestone(GitMilestone milestone) {
-		this.milestone = milestone;
-		return this;
-	}
-
-	/**
-	 * @return pullRequest
-	 */
-	public String getPullRequest() {
-		return pullRequest;
-	}
-
-	/**
-	 * @param pullRequest
-	 * @return this issue
-	 */
-	public GitIssue setPullRequest(String pullRequest) {
-		this.pullRequest = pullRequest;
-		return this;
-	}
-
-	/**
-	 * @return body
-	 */
-	public String getBody() {
-		return body;
-	}
-
-	/**
-	 * @param body
-	 * @return this issue
-	 */
-	public GitIssue setBody(String body) {
-		this.body = body;
-		return this;
-	}
-
-	/**
-	 * @return bodyHtml
-	 */
-	public String getBodyHtml() {
-		return bodyHtml;
-	}
-
-	/**
-	 * @param bodyHtml
-	 * @return this issue
-	 */
-	public GitIssue setBodyHtml(String bodyHtml) {
-		this.bodyHtml = bodyHtml;
-		return this;
-	}
-
-	/**
-	 * @return bodyText
-	 */
-	public String getBodyText() {
-		return bodyText;
-	}
-
-	/**
-	 * @param bodyText
-	 * @return this issue
-	 */
-	public GitIssue setBodyText(String bodyText) {
-		this.bodyText = bodyText;
-		return this;
-	}
-
-	/**
-	 * @return htmlUrl
-	 */
-	public String getHtmlUrl() {
-		return htmlUrl;
-	}
-
-	/**
-	 * @param htmlUrl
-	 * @return this issue
-	 */
-	public GitIssue setHtmlUrl(String htmlUrl) {
-		this.htmlUrl = htmlUrl;
-		return this;
-	}
-
-	/**
-	 * @return state
-	 */
-	public String getState() {
-		return state;
-	}
-
-	/**
-	 * @param state
-	 * @return this issue
-	 */
-	public GitIssue setState(String state) {
-		this.state = state;
-		return this;
-	}
-
-	/**
-	 * @return title
-	 */
-	public String getTitle() {
-		return title;
-	}
-
-	/**
-	 * @param title
-	 * @return this issue
-	 */
-	public GitIssue setTitle(String title) {
-		this.title = title;
-		return this;
-	}
-
-	/**
-	 * @return url
-	 */
-	public String getUrl() {
-		return url;
-	}
-
-	/**
-	 * @param url
-	 * @return this issue
-	 */
-	public GitIssue setUrl(String url) {
-		this.url = url;
-		return this;
-	}
-
-	/**
-	 * @return assignee
-	 */
-	public GitUser getAssignee() {
-		return assignee;
-	}
-
-	/**
-	 * @param assignee
-	 * @return this issue
-	 */
-	public GitIssue setAssignee(GitUser assignee) {
-		this.assignee = assignee;
-		return this;
-	}
-
-	/**
-	 * @return user
-	 */
-	public GitUser getUser() {
-		return user;
-	}
-
-	/**
-	 * @param user
-	 * @return this issue
-	 */
-	public GitIssue setUser(GitUser user) {
-		this.user = user;
-		return this;
-	}
-
-	/**
-	 * @return id
-	 */
 	public long getId() {
 		return id;
 	}
 
-	/**
-	 * @param id
-	 * @return this issue
-	 */
-	public GitIssue setId(long id) {
+	public void setId(long id) {
 		this.id = id;
-		return this;
-	}
-
-	@Override
-	public String toString() {
-		return "Issue " + number; //$NON-NLS-1$
 	}
 
 	public GitRepository getRepository() {
@@ -416,6 +138,46 @@ public class GitIssue implements Serializable {
 		this.repository = repository;
 	}
 
+	public Date getClosedAt() {
+		return closedAt;
+	}
+
+	public void setClosedAt(Date closedAt) {
+		this.closedAt = closedAt;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public int getComments() {
+		return comments;
+	}
+
+	public void setComments(int comments) {
+		this.comments = comments;
+	}
+
+	public int getNumber() {
+		return number;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
+
 	public List<GitIssueEvent> getEvents() {
 		return events;
 	}
@@ -424,12 +186,113 @@ public class GitIssue implements Serializable {
 		this.events = events;
 	}
 
+	public List<GitLabel> getLabels() {
+		return labels;
+	}
+
+	public void setLabels(List<GitLabel> labels) {
+		this.labels = labels;
+	}
+
+	public GitMilestone getMilestone() {
+		return milestone;
+	}
+
+	public void setMilestone(GitMilestone milestone) {
+		this.milestone = milestone;
+	}
+
+	public String getPullRequest() {
+		return pullRequest;
+	}
+
+	public void setPullRequest(String pullRequest) {
+		this.pullRequest = pullRequest;
+	}
+
+	public String getBody() {
+		return body;
+	}
+
+	public void setBody(String body) {
+		this.body = body;
+	}
+
+	public String getBodyHtml() {
+		return bodyHtml;
+	}
+
+	public void setBodyHtml(String bodyHtml) {
+		this.bodyHtml = bodyHtml;
+	}
+
+	public String getBodyText() {
+		return bodyText;
+	}
+
+	public void setBodyText(String bodyText) {
+		this.bodyText = bodyText;
+	}
+
+	public String getHtmlUrl() {
+		return htmlUrl;
+	}
+
+	public void setHtmlUrl(String htmlUrl) {
+		this.htmlUrl = htmlUrl;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public GitUser getAssignee() {
+		return assignee;
+	}
+
+	public void setAssignee(GitUser assignee) {
+		this.assignee = assignee;
+	}
+
+	public GitUser getUser() {
+		return user;
+	}
+
+	public void setUser(GitUser user) {
+		this.user = user;
+	}
+
 	public GitUser getClosedBy() {
 		return closedBy;
 	}
 
 	public void setClosedBy(GitUser closedBy) {
 		this.closedBy = closedBy;
+	}
+
+	@Override
+	public String toString() {
+		return "GitIssue [id=" + id + "]";
 	}
 
 }

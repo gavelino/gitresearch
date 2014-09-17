@@ -11,14 +11,16 @@
     <class>dcc.gaa.mes.gitresearch.model.GitCommitFile</class>
     <class>dcc.gaa.mes.gitresearch.model.GitCommitStats</class>
     <class>dcc.gaa.mes.gitresearch.model.GitCommitUser</class>
-    <class>dcc.gaa.mes.gitresearch.model.GitRepositoryCommit</class>
-    <class>dcc.gaa.mes.gitresearch.model.GitRepository</class>
-    <class>dcc.gaa.mes.gitresearch.model.GitUser</class>
     <class>dcc.gaa.mes.gitresearch.model.GitIssue</class>
+    <class>dcc.gaa.mes.gitresearch.model.GitIssueEvent</class>
     <class>dcc.gaa.mes.gitresearch.model.GitLabel</class>
     <class>dcc.gaa.mes.gitresearch.model.GitMilestone</class>
-    <class>dcc.gaa.mes.gitresearch.model.GitIssueEvent</class>
+    <class>dcc.gaa.mes.gitresearch.model.GitPullRequest</class>
+    <class>dcc.gaa.mes.gitresearch.model.GitPullRequestMarker</class>
+    <class>dcc.gaa.mes.gitresearch.model.GitRepository</class>
+    <class>dcc.gaa.mes.gitresearch.model.GitRepositoryCommit</class>
     <class>dcc.gaa.mes.gitresearch.model.GitResearch</class>
+    <class>dcc.gaa.mes.gitresearch.model.GitUser</class>
 
     <properties>
 		<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />

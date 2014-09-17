@@ -1,8 +1,5 @@
 package dcc.gaa.mes.gitresearch.dao;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-
 import dcc.gaa.mes.gitresearch.model.GitCommit;
 import dcc.gaa.mes.gitresearch.model.GitIssue;
 import dcc.gaa.mes.gitresearch.model.GitIssueEvent;
@@ -11,32 +8,30 @@ import dcc.gaa.mes.gitresearch.model.GitRepository;
 import dcc.gaa.mes.gitresearch.model.GitRepositoryCommit;
 import dcc.gaa.mes.gitresearch.model.GitUser;
 
-public class RepositoryDao extends GenericDAO<GitRepository> {
-	
-	private final EntityManager em;
-	
-	@Inject
-	public RepositoryDao(EntityManager em, UserDao userDao) {
-		super(em);
-		this.em = em;
-	}
+public class RepositoryDAO extends GenericDAO<GitRepository> {
 	
 	public void prePersist(GitRepository repository) {
+		
+		UserDAO userDao = new UserDAO();
+		CommitDAO commitDao = new CommitDAO();
+		
+		
 		for (GitRepositoryCommit rc : repository.getRepositoryCommits()) {
-			if(this.em.find(GitUser.class, rc.getAuthor().getId()) == null) {
-				this.em.persist(rc.getAuthor());
+			if(userDao.find(rc.getAuthor().getId()) == null) {
+				userDao.persist(rc.getAuthor());
 			}
 			
-			if(this.em.find(GitUser.class, rc.getCommitter().getId()) == null) {
-				this.em.persist(rc.getCommitter());
+			if(userDao.find(rc.getCommitter().getId()) == null) {
+				userDao.persist(rc.getCommitter());
 			}
 			
 			for (GitCommit gc : rc.getParents()) {
-				if(gc.getId() == null || this.em.find(GitCommit.class, gc.getId()) == null) {
-					this.em.persist(gc);
+				if(gc.getId() == null) {
+					commitDao.persist(gc);
 				}
 			}
 		}
+		
 		for (GitIssue issue : repository.getRepositoryIssues()) {
 			if(issue.getAssignee()!=null && this.em.find(GitUser.class, issue.getAssignee().getId()) == null) {
 				this.em.persist(issue.getAssignee());

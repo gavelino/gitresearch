@@ -2,14 +2,14 @@ package dcc.gaa.mes.gitresearch.model;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -41,6 +41,7 @@ public class GitRepository implements Serializable {
 	private String homepage;
 	private String language;
 	private String name;
+	// TODO Avaliar uma forma de referenciar o GitUser
 	private String owner;
 	private String url;
 
@@ -48,8 +49,9 @@ public class GitRepository implements Serializable {
 	private int openIssues;
 	private int size;
 	private int watchers;
-
-	private int commits;
+	
+	@ManyToOne(cascade = {CascadeType.REFRESH})
+	private GitResearch gitResearch; 
 
 	@OneToMany(cascade = { CascadeType.ALL })
 	private List<GitRepositoryCommit> repositoryCommits;
@@ -70,39 +72,32 @@ public class GitRepository implements Serializable {
 	 */
 	public GitRepository(SearchRepository searchRepository) {
 		if (searchRepository != null) {
-			Method[] gettersAndSetters = searchRepository.getClass()
-					.getMethods();
-			for (int i = 0; i < gettersAndSetters.length; i++) {
-				String methodName = gettersAndSetters[i].getName();
-				try {
-					if (methodName.startsWith("get")
-							&& !methodName.equalsIgnoreCase("getClass")
-							&& !methodName.equalsIgnoreCase("getId")) {
-						this.getClass()
-								.getMethod(
-										methodName.replaceFirst("get", "set"),
-										gettersAndSetters[i].getReturnType())
-								.invoke(this,
-										gettersAndSetters[i].invoke(
-												searchRepository, null));
-					} else if (methodName.startsWith("is")) {
-						this.getClass()
-								.getMethod(
-										methodName.replaceFirst("is", "set"),
-										gettersAndSetters[i].getReturnType())
-								.invoke(this,
-										gettersAndSetters[i].invoke(
-												searchRepository, null));
-					}
-
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					System.out.println("error method " + methodName);
-					e.printStackTrace();
-				}
-
-			}
 			this.id = searchRepository.getId();
+			
+			this.fork = searchRepository.isFork();
+			this.hasDownloads = searchRepository.isHasDownloads();
+			this.hasIssues = searchRepository.isHasIssues();
+			this.hasWiki = searchRepository.isHasWiki();
+			
+			this.isPrivate = searchRepository.isPrivate();
+			
+			this.createdAt = searchRepository.getCreatedAt();
+			this.pushedAt = searchRepository.getPushedAt();
+			
+			this.description = searchRepository.getDescription();
+			this.homepage = searchRepository.getHomepage();
+			this.language = searchRepository.getLanguage();
+			this.name = searchRepository.getName();
+			this.owner = searchRepository.getOwner();
+			this.url = searchRepository.getUrl();
+			
+			this.forks = searchRepository.getForks();
+			this.openIssues = searchRepository.getOpenIssues();
+			this.size = searchRepository.getSize();
+			this.watchers = searchRepository.getWatchers();
+			
+			this.repositoryCommits = new LinkedList<GitRepositoryCommit>();
+			this.repositoryIssues = new LinkedList<GitIssue>();
 		}
 	}
 
@@ -156,10 +151,6 @@ public class GitRepository implements Serializable {
 		if (name == null || name.length() == 0)
 			return null;
 		return owner + "/" + name; //$NON-NLS-1$
-	}
-
-	public int getCommits() {
-		return commits;
 	}
 
 	/**
@@ -301,10 +292,6 @@ public class GitRepository implements Serializable {
 		return isPrivate;
 	}
 
-	public void setCommits(int commits) {
-		this.commits = commits;
-	}
-
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
@@ -381,10 +368,16 @@ public class GitRepository implements Serializable {
 		this.watchers = watchers;
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
+	@Override
 	public String toString() {
-		return getId();
+		return "GitRepository [id=" + id + "]";
+	}
+
+	public GitResearch getGitResearch() {
+		return gitResearch;
+	}
+
+	public void setGitResearch(GitResearch gitResearch) {
+		this.gitResearch = gitResearch;
 	}
 }
