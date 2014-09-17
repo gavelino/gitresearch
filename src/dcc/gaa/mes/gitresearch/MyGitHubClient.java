@@ -154,13 +154,13 @@ public class MyGitHubClient extends GitHubClient{
 			return this.client;
 		if (client.getRemainingRequests()<1){
 			String oldClientName = client.getUser();
-			if (clients.peek().getRemainingRequests()>=1){
+			if (clients.peek().getRemainingRequests()>=1|| clients.peek().getRemainingRequests() == -1){
 				this.client = clients.poll();
 				clients.add(this.client);
 				System.out.println("Cliente " +oldClientName+ " alterado. Novo cliente "+client.getUser());
 			}
 			else{
-				if (clients.peek().getRemainingRequests()==0){
+				if (clients.peek().getRemainingRequests()==-1){
 					GitHubClient client = clients.poll();
 					clients.add(client);
 					return client;
