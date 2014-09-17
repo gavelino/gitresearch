@@ -35,6 +35,8 @@ public class GitHubUtil {
 	}
 	
 	public static void searchAndInsert(Set<String> tokens, HashMap<String, String> keywords) throws IOException {
+		logger.trace("GitHubUtil.searchAndInsert()");
+		
 		GitHubService gitHubservice = new GitHubService(new MyGitHubClient(tokens));
 		
 		int page = 1;
@@ -45,13 +47,15 @@ public class GitHubUtil {
 				GitRepository repo = repositories.get(i);
 				List<GitIssue> issues = gitHubservice.getAllIssues(repo);
 				repo.setRepositoryIssues(issues);
-				repositories.add(repo);
 			}
 		} while (repositories.size() == 100);
 		
 		GitResearch research = new GitResearch(keywords, repositories);
 		
+		logger.debug("Number of repositories found: " + repositories.size());
+		logger.debug("Persisting the repositories ...");
 		new ResearchDAO().persist(research);
+		logger.debug("Repositories persisted");
 	}
 
 	public static final Date getResetTime(String token) throws IOException {
