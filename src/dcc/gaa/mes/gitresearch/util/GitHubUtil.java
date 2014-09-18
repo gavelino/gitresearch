@@ -35,7 +35,7 @@ public class GitHubUtil {
 	}
 	
 	public static void searchAndInsert(Set<String> tokens, HashMap<String, String> keywords) throws IOException {
-		logger.trace("GitHubUtil.searchAndInsert()");
+		logger.trace("GitHubUtil.searchAndInsert(Set, HashMap)");
 		
 		GitHubService gitHubservice = new GitHubService(new MyGitHubClient(tokens));
 		

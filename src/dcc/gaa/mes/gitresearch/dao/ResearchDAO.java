@@ -127,11 +127,6 @@ public class ResearchDAO extends GenericDAO<GitResearch> {
 				tx.rollback();
 			throw re;
 		}
-		
-		
-		
-		this.prePersist(research);
-		super.persist(research);
 	}
 	
 	@Override

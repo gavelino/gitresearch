@@ -1,24 +1,20 @@
 package dcc.gaa.mes.gitresearch;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
+import org.apache.log4j.Logger;
 import org.eclipse.egit.github.core.Comment;
 import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.IssueEvent;
 import org.eclipse.egit.github.core.RepositoryCommit;
 import org.eclipse.egit.github.core.SearchRepository;
-import org.eclipse.egit.github.core.client.GitHubClient;
-import org.eclipse.egit.github.core.client.GitHubRequest;
 import org.eclipse.egit.github.core.client.PageIterator;
 import org.eclipse.egit.github.core.service.CommitService;
 import org.eclipse.egit.github.core.service.IssueService;
@@ -31,6 +27,9 @@ import dcc.gaa.mes.gitresearch.model.GitRepositoryCommit;
 import dcc.gaa.mes.gitresearch.util.GitHubUtil;
 
 public class GitHubService {
+	
+	private static final Logger logger = Logger.getLogger(GitHubService.class);
+	
 //	private GitHubClient client;
 //	private Queue<GitHubClient> clients;
 	private RepositoryService repositoryService;
@@ -80,6 +79,7 @@ public class GitHubService {
 	}
 	
 	public List<GitRepository> searchRepositories(Map<String, String> params, int startPage, int endPage) throws IOException {
+		logger.trace("GitHubService.searchRepositories(Map, int, int)");
 		
 		List<SearchRepository> searchRepositories = new LinkedList<SearchRepository>();
 		List<GitRepository> repositories = new LinkedList<GitRepository>();
@@ -87,15 +87,17 @@ public class GitHubService {
 		
 		int initPage = startPage;
 		do {
-				
-			
+			logger.debug("Requesting github repositories (page " + initPage + ")");
 			searchRepositories = getRepositoryService().searchRepositories(params, initPage++);
 			
 			for (SearchRepository searchRepository : searchRepositories) {
+				logger.debug("Creating repository " + searchRepository.getId());
 				GitRepository searchRep = new GitRepository(searchRepository);
 				
+				logger.debug("Requesting commits of " + searchRepository.getName());
 				List<RepositoryCommit> repCommit = getCommitService().getCommits(searchRepository);
 			
+				logger.debug("Adding the commits to " + searchRepository.getName());
 				List<GitRepositoryCommit> myRepCommit = new ArrayList<GitRepositoryCommit>();
 				for (RepositoryCommit repositoryCommit : repCommit) {
 					myRepCommit.add(new GitRepositoryCommit(repositoryCommit));
@@ -106,46 +108,53 @@ public class GitHubService {
 
 		} while (searchRepositories.size() > 0 && initPage <= endPage);
 
-
 		return repositories;
 	}
 
-	public List<GitIssue> getIssues(Map<String, String> issueFilter, GitRepository gitRepository) throws IOException{
+	public List<GitIssue> getIssues(Map<String, String> issueFilter, GitRepository gitRepository) throws IOException {
+		logger.trace("GitHubService.getIssues(Map, GitRepository)");
+		
 		List<GitIssue> gitIssues = new ArrayList<GitIssue>();
 		SearchRepository repository = GitHubUtil.createFakeSearchRepository(gitRepository);
 		
-		
+		logger.debug("Requesting issues of " + gitRepository.getName());
 		List<Issue> issues =  getIssueService().getIssues (repository, issueFilter);
 		
 		for (Issue issue : issues) {
-			System.out.println(issue);
+			logger.debug("Adding issue " + issue.getId() + " to " + gitRepository.getName());
 			PageIterator<IssueEvent> events =  getIssueService().pageIssueEvents(repository.getOwner(), repository.getName(), issue.getNumber());
 			GitIssue gitIssue =  new GitIssue(issue, gitRepository);
 			gitIssue.setEvents(getIssueEvents(events.iterator(), gitIssue));
 			List<Comment> comments = getIssueService().getComments(repository.getOwner(),repository.getName(), issue.getNumber());
 			for (Comment comment : comments) {
-				System.out.println("-"+comment);
+				// FIXME para que isso? 
+//				System.out.println("-"+comment);
 			}
 			gitIssues.add(gitIssue);
 			
 			getIssueService().pageIssueEvents(repository.getOwner(), repository.getName(), issue.getNumber());
 		}
+		
 		return gitIssues;
 	}
 	
 	private List<GitIssueEvent> getIssueEvents(Iterator<Collection<IssueEvent>> iterator, GitIssue gitIssue) {
+		logger.trace("GitHubService.getIssueEvents(Iterator, GitIssue)");
+		
+		logger.debug("Getting issue events");
 		List<GitIssueEvent> issueEvents = new ArrayList<GitIssueEvent>(); 
 		while (iterator.hasNext()) {
 			for (IssueEvent issueEvent : iterator.next()) {
 				issueEvents.add(new GitIssueEvent(issueEvent, gitIssue));
-				System.out.println(issueEvent);
 			}
 		}
+		
 		return issueEvents;
 	}
 
 
-	public List<GitIssue> getAllIssues(GitRepository gitRepository) throws IOException{
+	public List<GitIssue> getAllIssues(GitRepository gitRepository) throws IOException {
+		logger.trace("GitHubService.getAllIssues(GitRepository)");
 		Map<String, String> issueFilter= new HashMap<String, String>();
 		issueFilter.put("state", "all");
 		return getIssues(issueFilter, gitRepository);
