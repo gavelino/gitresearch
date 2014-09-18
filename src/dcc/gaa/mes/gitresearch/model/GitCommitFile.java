@@ -204,4 +204,12 @@ public class GitCommitFile implements Serializable {
 		this.status = status;
 		return this;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("GitCommitFile [id=").append(id).append(", filename=")
+				.append(filename).append(", sha=").append(sha).append("]");
+		return builder.toString();
+	}
 }

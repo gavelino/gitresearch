@@ -164,4 +164,12 @@ public class GitIssueEvent implements Serializable {
 		this.actor = actor;
 		return this;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("GitIssueEvent [id=").append(id).append(", event=")
+				.append(event).append("]");
+		return builder.toString();
+	}
 }

@@ -469,6 +469,14 @@ public class GitUser implements Serializable {
 		return this;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("GitUser [id=").append(id).append(", login=")
+				.append(login).append("]");
+		return builder.toString();
+	}
+
 	// /**
 	// * @return plan
 	// */

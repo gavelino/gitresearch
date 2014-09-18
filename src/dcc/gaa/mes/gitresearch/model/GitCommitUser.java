@@ -74,4 +74,13 @@ public class GitCommitUser implements Serializable {
 		this.name = name;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("GitCommitUser [id=").append(id).append(", date=")
+				.append(date).append(", email=").append(email)
+				.append(", name=").append(name).append("]");
+		return builder.toString();
+	}
+
 }

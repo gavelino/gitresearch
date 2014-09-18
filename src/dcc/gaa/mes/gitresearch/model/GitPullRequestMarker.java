@@ -89,4 +89,12 @@ public class GitPullRequestMarker implements Serializable {
 		return user;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("GitPullRequestMarker [ref=").append(ref)
+				.append(", sha=").append(sha).append("]");
+		return builder.toString();
+	}
+
 }

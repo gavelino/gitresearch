@@ -89,4 +89,12 @@ public class GitCommitStats implements Serializable {
 		this.total = total;
 		return this;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("GitCommitStats [id=").append(id).append(", total=")
+				.append(total).append("]");
+		return builder.toString();
+	}
 }

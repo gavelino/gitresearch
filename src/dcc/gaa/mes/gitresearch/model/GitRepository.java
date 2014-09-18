@@ -370,7 +370,10 @@ public class GitRepository implements Serializable {
 
 	@Override
 	public String toString() {
-		return "GitRepository [id=" + id + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("GitRepository [id=").append(id).append(", name=")
+				.append(name).append("]");
+		return builder.toString();
 	}
 
 	public GitResearch getGitResearch() {

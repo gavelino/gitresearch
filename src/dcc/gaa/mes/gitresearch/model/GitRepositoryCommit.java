@@ -208,4 +208,12 @@ public class GitRepositoryCommit implements Serializable {
 	public void setRepository(GitRepository repository) {
 		this.repository = repository;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("GitRepositoryCommit [sha=").append(sha).append("]");
+		return builder.toString();
+	}
+	
 }

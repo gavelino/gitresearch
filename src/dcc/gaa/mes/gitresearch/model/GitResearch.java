@@ -77,4 +77,15 @@ public class GitResearch implements Serializable {
 		this.searchParams = searchParams;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("GitResearch [id=").append(id).append(", date=")
+				.append(date).append(", repositories=").append(repositories.size())
+				.append(", searchParams=").append(searchParams).append("]");
+		return builder.toString();
+	}
+	
+	
+
 }

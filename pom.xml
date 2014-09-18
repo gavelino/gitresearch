@@ -16,21 +16,6 @@
 		</resources>
 	</build>
 	<dependencies>
-		<!-- <dependency> -->
-		<!-- <groupId>org.hibernate</groupId> -->
-		<!-- <artifactId>hibernate-entitymanager</artifactId> -->
-		<!-- <version>4.3.6.Final</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>com.google.inject</groupId> -->
-		<!-- <artifactId>guice</artifactId> -->
-		<!-- <version>3.0</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>com.google.inject.extensions</groupId> -->
-		<!-- <artifactId>guice-persist</artifactId> -->
-		<!-- <version>3.0</version> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>eclipselink</artifactId>

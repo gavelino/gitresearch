@@ -50,12 +50,12 @@ public class GitLabel implements Serializable {
 		return name != null ? name.hashCode() : super.hashCode();
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
+	@Override
 	public String toString() {
-		final String name = this.name;
-		return name != null ? name : super.toString();
+		StringBuilder builder = new StringBuilder();
+		builder.append("GitLabel [color=").append(color).append(", name=")
+				.append(name).append("]");
+		return builder.toString();
 	}
 
 	/**

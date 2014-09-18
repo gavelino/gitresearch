@@ -534,6 +534,9 @@ public class GitPullRequest implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Pull Request " + number; //$NON-NLS-1$
+		StringBuilder builder = new StringBuilder();
+		builder.append("GitPullRequest [id=").append(id).append(", number=")
+				.append(number).append(", title=").append(title).append("]");
+		return builder.toString();
 	}
 }

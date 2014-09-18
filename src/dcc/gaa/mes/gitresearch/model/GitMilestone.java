@@ -220,4 +220,12 @@ public class GitMilestone implements Serializable {
 		this.creator = creator;
 		return this;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("GitMilestone [state=").append(state).append(", title=")
+				.append(title).append("]");
+		return builder.toString();
+	}
 }

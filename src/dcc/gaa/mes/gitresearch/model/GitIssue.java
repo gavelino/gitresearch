@@ -292,7 +292,10 @@ public class GitIssue implements Serializable {
 
 	@Override
 	public String toString() {
-		return "GitIssue [id=" + id + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("GitIssue [id=").append(id).append(", title=")
+				.append(title).append("]");
+		return builder.toString();
 	}
 
 }
