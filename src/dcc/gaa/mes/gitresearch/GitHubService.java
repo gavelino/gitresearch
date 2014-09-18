@@ -101,7 +101,6 @@ public class GitHubService {
 					myRepCommit.add(new GitRepositoryCommit(repositoryCommit));
 				}
 				searchRep.setRepositoryCommits(myRepCommit);
-//				searchRep.setCommits(getCommitService().getCommits(searchRepository).size());
 				repositories.add(searchRep);				
 			}
 

@@ -40,7 +40,7 @@ public class GitResearch implements Serializable {
 
 	public GitResearch(Map<String, String> searchParams,
 			List<GitRepository> repositories) {
-		date = new Date();
+		this.date = new Date();
 		this.searchParams = searchParams;
 		this.repositories = repositories;
 	}

@@ -53,7 +53,7 @@ public class GitHubUtilTest extends AbstractTest {
 		
 		try {
 			GitHubUtil.searchAndInsert(tokens, params);
-			logger.info("The process finished without problems");
+			logger.info("The process was finished without problems");
 		} catch (IOException e) {
 			logger.info(e);
 			fail(e.getMessage());

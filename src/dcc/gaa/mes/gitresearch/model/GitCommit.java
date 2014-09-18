@@ -48,15 +48,25 @@ public class GitCommit implements Serializable {
 
 	public GitCommit(Commit commit) {
 		if (commit != null) {
-			this.author = new GitCommitUser(commit.getAuthor());
-			this.committer = new GitCommitUser(commit.getCommitter());
+			if (commit.getAuthor() != null) {
+				this.author = new GitCommitUser(commit.getAuthor());
+			}
+			
+			if (commit.getCommitter() != null) {
+				this.committer = new GitCommitUser(commit.getCommitter());
+			}
+			
 			this.commentCount = commit.getCommentCount();
+			
 			this.parents = new ArrayList<GitCommit>();
 			if (commit.getParents() != null) {
 				for (Commit parentCommit : commit.getParents()) {
-					parents.add(new GitCommit(parentCommit));
+					if (parentCommit != null) {
+						parents.add(new GitCommit(parentCommit));
+					}
 				}
 			}
+			
 			this.message = commit.getMessage();
 			this.sha = commit.getSha();
 			this.url = commit.getUrl();

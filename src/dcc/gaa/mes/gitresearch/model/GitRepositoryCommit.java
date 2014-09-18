@@ -51,25 +51,43 @@ public class GitRepositoryCommit implements Serializable {
 
 	public GitRepositoryCommit(RepositoryCommit repositoryCommit) {
 		if (repositoryCommit != null) {
-			this.setCommit(new GitCommit(repositoryCommit.getCommit()));
-			this.setStats(new GitCommitStats(repositoryCommit.getStats()));
+			if (repositoryCommit.getCommit() != null) {
+				this.commit = new GitCommit(repositoryCommit.getCommit());
+			}
+			
+			if (repositoryCommit.getStats() != null) {
+				this.stats = new GitCommitStats(repositoryCommit.getStats());
+			}
+			
 			this.parents = new ArrayList<GitCommit>();
 			if (repositoryCommit.getParents() != null) {
 				for (Commit parentCommit : repositoryCommit.getParents()) {
-					parents.add(new GitCommit(parentCommit));
+					if (parentCommit != null) {
+						parents.add(new GitCommit(parentCommit));
+					}
 				}
 			}
+			
 			this.files = new ArrayList<GitCommitFile>();
 			if (repositoryCommit.getFiles() != null) {
 				for (CommitFile commitFile : repositoryCommit.getFiles()) {
-					files.add(new GitCommitFile(commitFile));
+					if (commitFile != null) {
+						files.add(new GitCommitFile(commitFile));
+					}
 				}
 			}
-			this.setSha(repositoryCommit.getSha());
+			
+			this.sha = repositoryCommit.getSha();
 			this.commit.setSha(this.getSha());
-			this.setUrl(repositoryCommit.getUrl());
-			this.setAuthor(new GitUser(repositoryCommit.getAuthor()));
-			this.setCommitter(new GitUser(repositoryCommit.getCommitter()));
+			this.url = repositoryCommit.getUrl();
+			
+			if (repositoryCommit.getAuthor() != null) {
+				this.author = new GitUser(repositoryCommit.getAuthor());
+			}
+			
+			if (repositoryCommit.getCommitter() != null) {
+				this.committer = new GitUser(repositoryCommit.getCommitter());
+			}
 		}
 
 	}
