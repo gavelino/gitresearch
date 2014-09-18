@@ -177,35 +177,28 @@ public class MyGitHubClient extends GitHubClient{
 			return this.client;
 		if (client.getRemainingRequests()<1){
 			String oldClientName = client.getUser();
+			//Check the first client in the queue
 			if (clients.peek().getRemainingRequests()>=1|| clients.peek().getRemainingRequests() == -1){
 				this.client = clients.poll();
 				clients.add(this.client);
 				System.out.println("Cliente " +oldClientName+ " alterado. Novo cliente "+client.getUser());
 			}
 			else{
-				if (clients.peek().getRemainingRequests()==-1){
+				try {
+					Date resetDate = GitHubUtil.getResetTime(tokenMap.get(clients.peek()));
+					long waitTime = resetDate.getTime() - new Date().getTime()+5000;
+
+					SimpleDateFormat formata = new SimpleDateFormat("HH:mm:ss");
+					System.out.println("Aguardando novos limites de uso da API");
+					System.out.println("Time = " + formata.format(new Date()) + "    " + waitTime);
+					Thread.sleep(waitTime);
 					GitHubClient client = clients.poll();
 					clients.add(client);
 					return client;
-				}
-				if (clients.peek().getRemainingRequests()==0){
-
-					try {
-						Date resetDate = GitHubUtil.getResetTime(tokenMap.get(clients.peek()));
-						long waitTime = resetDate.getTime() - new Date().getTime()+5000;
-
-						SimpleDateFormat formata = new SimpleDateFormat("HH:mm:ss");
-						System.out.println("Aguardando novos limites de uso da API");
-						System.out.println("Time = " + formata.format(new Date()) + "    " + waitTime);
-						Thread.sleep(waitTime);
-						GitHubClient client = clients.poll();
-						clients.add(client);
-						return client;
-					} catch (InterruptedException ie) {
-						ie.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+				} catch (InterruptedException ie) {
+					ie.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 
