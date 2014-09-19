@@ -1,6 +1,8 @@
 package dcc.gaa.mes.gitresearch.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityTransaction;
 
@@ -17,12 +19,33 @@ import dcc.gaa.mes.gitresearch.model.GitUser;
 public class ResearchDAO extends GenericDAO<GitResearch> {
 	
 	public void prePersist(GitResearch research) {
+	    
+	    Map<String, GitCommit> map = new HashMap<String, GitCommit>();
+	    for (GitRepository gr : research.getRepositories()) {
+	        for (GitRepositoryCommit rc : gr.getRepositoryCommits()) {
+	            map.put(rc.getCommit().getSha(), rc.getCommit());
+	        }
+	    }
 		
 		for (GitRepository gr : research.getRepositories()) {
 			gr.setGitResearch(research);
 			
 			for (GitRepositoryCommit rc : gr.getRepositoryCommits()) {
 				rc.setRepository(gr);
+				for (int i = 0; i < rc.getParents().size(); i++) {
+                    GitCommit gc = rc.getParents().get(i);
+                    if (map.containsKey(gc.getSha())) {
+                        rc.getParents().set(i, map.get(gc.getSha()));
+                    }
+                }
+				
+				List<GitCommit> parents = rc.getCommit().getParents();
+                for (int i = 0; i < parents.size(); i++) {
+				    GitCommit gc = parents.get(i);
+                    if (map.containsKey(gc.getSha())) {
+                        parents.set(i, map.get(gc.getSha()));
+                    }
+				}
 			}
 			
 			for (GitIssue gi : gr.getRepositoryIssues()) {
