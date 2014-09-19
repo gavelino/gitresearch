@@ -15,8 +15,10 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import dcc.gaa.mes.gitresearch.dao.ResearchDAO;
+import dcc.gaa.mes.gitresearch.dao.UserDAO;
 import dcc.gaa.mes.gitresearch.model.GitRepository;
 import dcc.gaa.mes.gitresearch.model.GitResearch;
+import dcc.gaa.mes.gitresearch.model.GitUser;
 import dcc.gaa.mes.gitresearch.util.GitHubUtil;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -79,6 +81,21 @@ public class GitHubUtilTest extends AbstractTest {
             }
         }
 
+        logger.info("The process was finished without problems");
+    }
+    
+    @Test
+    public void test4_updateUser() throws IOException {
+        logger.info("Testing GitHubUtil.updateUser(Set<String>, GitUser)");
+        
+        HashSet<String> tokens = new HashSet<String>();
+        Collections.addAll(tokens, this.tokens);
+        
+        logger.debug("Updating all users");
+        for (GitUser gu : new UserDAO().getAll()) {
+            GitHubUtil.updateUser(tokens, gu);
+        }
+        
         logger.info("The process was finished without problems");
     }
 

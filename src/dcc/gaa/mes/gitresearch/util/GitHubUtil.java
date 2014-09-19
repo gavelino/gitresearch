@@ -17,7 +17,9 @@ import org.eclipse.egit.github.core.CommitFile;
 import org.eclipse.egit.github.core.RepositoryCommit;
 import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.SearchRepository;
+import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.service.CommitService;
+import org.eclipse.egit.github.core.service.UserService;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -27,12 +29,14 @@ import dcc.gaa.mes.gitresearch.GitHubService;
 import dcc.gaa.mes.gitresearch.MyGitHubClient;
 import dcc.gaa.mes.gitresearch.dao.RepositoryDAO;
 import dcc.gaa.mes.gitresearch.dao.ResearchDAO;
+import dcc.gaa.mes.gitresearch.dao.UserDAO;
 import dcc.gaa.mes.gitresearch.model.GitCommitFile;
 import dcc.gaa.mes.gitresearch.model.GitCommitStats;
 import dcc.gaa.mes.gitresearch.model.GitIssue;
 import dcc.gaa.mes.gitresearch.model.GitRepository;
 import dcc.gaa.mes.gitresearch.model.GitRepositoryCommit;
 import dcc.gaa.mes.gitresearch.model.GitResearch;
+import dcc.gaa.mes.gitresearch.model.GitUser;
 
 public class GitHubUtil {
 	
@@ -113,6 +117,22 @@ public class GitHubUtil {
 		new RepositoryDAO().merge(gitRepository);
 		
 		logger.debug("Repository " + gitRepository.getName() +  " updated");
+	}
+	
+	
+	public static final void updateUser(Set<String> tokens, GitUser gitUser) throws IOException {
+	    logger.trace("GitHubUtil.updateUser(Set<String>, GitUser)");
+	    
+	    UserService userService = new UserService(new MyGitHubClient(tokens));
+	    
+	    logger.debug("Updating " + gitUser.getLogin() + " user");
+	    User user = userService.getUser(gitUser.getLogin());
+	    gitUser = new GitUser(user);
+	    
+	    logger.debug("Updating database ... ");
+	    new UserDAO().merge(gitUser);
+
+	    logger.debug("User " + gitUser.getLogin() + " updated");
 	}
 	
 }
