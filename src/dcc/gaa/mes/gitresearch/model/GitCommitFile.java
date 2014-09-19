@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 
 import org.eclipse.egit.github.core.CommitFile;
 
@@ -27,6 +28,7 @@ public class GitCommitFile implements Serializable {
 
 	private String filename;
 
+	@Lob
 	private String patch;
 
 	private String rawUrl;

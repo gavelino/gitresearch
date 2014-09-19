@@ -7,12 +7,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.eclipse.egit.github.core.CommitFile;
+import org.eclipse.egit.github.core.RepositoryCommit;
+import org.eclipse.egit.github.core.RepositoryId;
 import org.eclipse.egit.github.core.SearchRepository;
+import org.eclipse.egit.github.core.service.CommitService;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -20,9 +25,13 @@ import com.google.gson.JsonParser;
 
 import dcc.gaa.mes.gitresearch.GitHubService;
 import dcc.gaa.mes.gitresearch.MyGitHubClient;
+import dcc.gaa.mes.gitresearch.dao.RepositoryDAO;
 import dcc.gaa.mes.gitresearch.dao.ResearchDAO;
+import dcc.gaa.mes.gitresearch.model.GitCommitFile;
+import dcc.gaa.mes.gitresearch.model.GitCommitStats;
 import dcc.gaa.mes.gitresearch.model.GitIssue;
 import dcc.gaa.mes.gitresearch.model.GitRepository;
+import dcc.gaa.mes.gitresearch.model.GitRepositoryCommit;
 import dcc.gaa.mes.gitresearch.model.GitResearch;
 
 public class GitHubUtil {
@@ -59,6 +68,8 @@ public class GitHubUtil {
 	}
 
 	public static final Date getResetTime(String token) throws IOException {
+		logger.trace("GitHubUtil.getResetTime(String)");
+		
 		String url = "https://api.github.com/rate_limit?access_token=" + token;
 		URL obj = new URL(url);
 		
@@ -79,4 +90,29 @@ public class GitHubUtil {
 		
 		return null;
 	}
+	
+	public static final void updateRepository(Set<String> tokens, GitRepository gitRepository) throws IOException {
+		logger.trace("GitHubUtil.updateRepository(Set<String>, GitRepository)");
+		
+		logger.debug("Updating the repository " + gitRepository.getName());
+		RepositoryId repositoryId = new RepositoryId(gitRepository.getOwner(), gitRepository.getName());
+		CommitService commitService = new CommitService(new MyGitHubClient(tokens));
+		
+		for (GitRepositoryCommit rc : gitRepository.getRepositoryCommits()) {
+			RepositoryCommit repositoryCommit = commitService.getCommit(repositoryId, rc.getSha());
+			
+			rc.setStats(new GitCommitStats(repositoryCommit.getStats()));
+			rc.setFiles(new LinkedList<GitCommitFile>());
+			for (CommitFile cf : repositoryCommit.getFiles()) {
+				rc.getFiles().add(new GitCommitFile(cf));
+			}
+			
+		}
+		
+		logger.debug("Updating database ... ");
+		new RepositoryDAO().merge(gitRepository);
+		
+		logger.debug("Repository " + gitRepository.getName() +  " updated");
+	}
+	
 }

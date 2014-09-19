@@ -40,6 +40,19 @@ abstract class GenericDAO<T> {
 			throw e;
 		}
 	}
+	
+	public void merge(T o) {
+		EntityTransaction tx = this.em.getTransaction();
+		try {
+			tx.begin();
+			this.em.merge(o);
+			tx.commit();
+		} catch (RuntimeException e) {
+			if(tx != null && tx.isActive()) 
+				tx.rollback();
+			throw e;
+		}
+	}
 
 	@Override
 	protected void finalize() throws Throwable {

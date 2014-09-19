@@ -1,5 +1,7 @@
 package dcc.gaa.mes.gitresearch.dao;
 
+import java.util.List;
+
 import javax.persistence.EntityTransaction;
 
 import dcc.gaa.mes.gitresearch.model.GitCommit;
@@ -127,6 +129,10 @@ public class ResearchDAO extends GenericDAO<GitResearch> {
 				tx.rollback();
 			throw re;
 		}
+	}
+	
+	public List<GitResearch> getAll() {
+		return this.em.createQuery("SELECT gr FROM GitResearch gr", GitResearch.class).getResultList();
 	}
 	
 	@Override
