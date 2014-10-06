@@ -18,6 +18,7 @@ import org.eclipse.egit.github.core.SearchRepository;
 import org.eclipse.egit.github.core.client.PageIterator;
 import org.eclipse.egit.github.core.service.CommitService;
 import org.eclipse.egit.github.core.service.IssueService;
+import org.eclipse.egit.github.core.service.PullRequestService;
 import org.eclipse.egit.github.core.service.RepositoryService;
 
 import dcc.gaa.mes.gitresearch.model.GitIssue;
@@ -30,25 +31,11 @@ public class GitHubService {
 	
 	private static final Logger logger = Logger.getLogger(GitHubService.class);
 	
-//	private GitHubClient client;
-//	private Queue<GitHubClient> clients;
 	private RepositoryService repositoryService;
 	private CommitService commitService;
 	private IssueService issueService;
-//	private Map<GitHubClient, String> tokenMap;
 	private MyGitHubClient myClient;
 	
-//	public GitHubService(GitHubClient client, String token) {
-//		this.clients = new LinkedList<GitHubClient>();
-//		this.clients.add(client);
-//		this.client = client;
-//	}
-//	public GitHubService(Queue<GitHubClient> clients,  Map<GitHubClient, String> tokenMap) {
-//		this.clients = clients;
-//		this.client = clients.poll();
-//		this.clients.add(this.client);
-//		this.tokenMap = tokenMap;
-//	}
 	
 	public GitHubService(MyGitHubClient myClient) {
 		this.myClient = myClient;
@@ -123,13 +110,9 @@ public class GitHubService {
 		for (Issue issue : issues) {
 			logger.debug("Adding issue " + issue.getId() + " to " + gitRepository.getName());
 			PageIterator<IssueEvent> events =  getIssueService().pageIssueEvents(repository.getOwner(), repository.getName(), issue.getNumber());
-			GitIssue gitIssue =  new GitIssue(issue, gitRepository);
-			gitIssue.setEvents(getIssueEvents(events.iterator(), gitIssue));
+ 			GitIssue gitIssue =  new GitIssue(issue, gitRepository);
+ 			gitIssue.setEvents(getIssueEvents(events.iterator(), gitIssue));
 			List<Comment> comments = getIssueService().getComments(repository.getOwner(),repository.getName(), issue.getNumber());
-			for (Comment comment : comments) {
-				// FIXME para que isso? 
-//				System.out.println("-"+comment);
-			}
 			gitIssues.add(gitIssue);
 			
 			getIssueService().pageIssueEvents(repository.getOwner(), repository.getName(), issue.getNumber());
