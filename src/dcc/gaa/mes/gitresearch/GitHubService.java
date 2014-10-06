@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.egit.github.core.Comment;
 import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.IssueEvent;
+import org.eclipse.egit.github.core.PullRequest;
 import org.eclipse.egit.github.core.RepositoryCommit;
 import org.eclipse.egit.github.core.SearchRepository;
 import org.eclipse.egit.github.core.client.PageIterator;
@@ -106,7 +107,9 @@ public class GitHubService {
 		
 		logger.debug("Requesting issues of " + gitRepository.getName());
 		List<Issue> issues =  getIssueService().getIssues (repository, issueFilter);
-		
+		for (PullRequest pullRequest : new PullRequestService(myClient).getPullRequests(repository, "all")) {
+			System.out.println(pullRequest);
+		}
 		for (Issue issue : issues) {
 			logger.debug("Adding issue " + issue.getId() + " to " + gitRepository.getName());
 			PageIterator<IssueEvent> events =  getIssueService().pageIssueEvents(repository.getOwner(), repository.getName(), issue.getNumber());
