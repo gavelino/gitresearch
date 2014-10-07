@@ -48,11 +48,9 @@ public class GitIssue implements Serializable {
 	@ManyToOne(cascade = { CascadeType.REFRESH })
 	private GitMilestone milestone;
 
-	// TODO Revisar a necessidade de armazenar o objeto GitPullRequest em uma
-	// Issue
-	// private GitPullRequest pullRequest;
-	private String pullRequest;
-
+	
+	private GitPullRequest pullRequest;
+	
 	private String body;
 
 	private String bodyHtml;
@@ -109,7 +107,7 @@ public class GitIssue implements Serializable {
 			}
 
 			this.number = issue.getNumber();
-			this.pullRequest = issue.getPullRequest().toString();
+			this.pullRequest = null;
 			this.state = issue.getState();
 			this.updatedAt = issue.getUpdatedAt();
 			this.title = issue.getTitle();
@@ -202,11 +200,11 @@ public class GitIssue implements Serializable {
 		this.milestone = milestone;
 	}
 
-	public String getPullRequest() {
+	public GitPullRequest getPullRequest() {
 		return pullRequest;
 	}
 
-	public void setPullRequest(String pullRequest) {
+	public void setPullRequest(GitPullRequest pullRequest) {
 		this.pullRequest = pullRequest;
 	}
 

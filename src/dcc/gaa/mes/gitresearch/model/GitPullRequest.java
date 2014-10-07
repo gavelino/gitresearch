@@ -3,10 +3,19 @@ package dcc.gaa.mes.gitresearch.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import org.eclipse.egit.github.core.Milestone;
+import org.eclipse.egit.github.core.PullRequest;
 import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.util.DateUtils;
 
+@Entity
 @SuppressWarnings("serial")
 public class GitPullRequest implements Serializable {
 
@@ -14,14 +23,19 @@ public class GitPullRequest implements Serializable {
 
 	private boolean merged;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date closedAt;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date mergedAt;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
 
+	@Id
 	private long id;
 
 	private int additions;
@@ -36,11 +50,16 @@ public class GitPullRequest implements Serializable {
 
 	private int number;
 
-	private Milestone milestone;
+	@ManyToOne(cascade = { CascadeType.REFRESH })
+	private GitMilestone milestone;
+	
+//	TODO Verificar a necessidade dessa informação
+//	private GitPullRequestMarker base;
+//	private GitPullRequestMarker head;
+	
+	private String base;
 
-	private GitPullRequestMarker base;
-
-	private GitPullRequestMarker head;
+	private String head;
 
 	private String body;
 
@@ -62,11 +81,55 @@ public class GitPullRequest implements Serializable {
 
 	private String url;
 
-	private User assignee;
+	@ManyToOne(cascade = { CascadeType.REFRESH })
+	private GitUser assignee;
 
-	private User mergedBy;
+	@ManyToOne(cascade = { CascadeType.REFRESH })
+	private GitUser mergedBy;
 
-	private User user;
+	@ManyToOne(cascade = { CascadeType.REFRESH })
+	private GitUser user;
+	
+	public GitPullRequest() {
+	}
+	
+	public GitPullRequest(PullRequest pullRequest) {
+		if (pullRequest!=null){
+			this.additions = pullRequest.getAdditions();
+			if (pullRequest.getAssignee()!=null)
+				this.assignee = new GitUser(pullRequest.getAssignee());
+			this.base = pullRequest.getBase().toString();
+			this.body = pullRequest.getBody();
+			this.bodyHtml = pullRequest.getBodyHtml();
+			this.bodyText = pullRequest.getBodyText();
+			this.changedFiles = pullRequest.getChangedFiles();
+			this.closedAt = pullRequest.getClosedAt();
+			this.comments = pullRequest.getComments();
+			this.commits = pullRequest.getCommits();
+			this.createdAt = pullRequest.getCreatedAt();
+			this.deletions = pullRequest.getDeletions();
+			this.diffUrl = pullRequest.getDiffUrl();
+			this.head = pullRequest.getHead().toString();
+			this.htmlUrl = pullRequest.getHtmlUrl();
+			this.id = pullRequest.getId();
+			this.issueUrl = pullRequest.getIssueUrl();
+			this.mergeable = pullRequest.isMergeable();
+			this.merged = pullRequest.isMerged();
+			this.mergedAt = pullRequest.getMergedAt();
+			if (pullRequest.getMergedBy()!=null)
+				this.mergedBy = new GitUser(pullRequest.getMergedBy());
+			if (pullRequest.getMilestone()!=null)
+				this.milestone = new GitMilestone(pullRequest.getMilestone());
+			this.number = pullRequest.getNumber();
+			this.patchUrl = pullRequest.getPatchUrl();
+			this.state = pullRequest.getState();
+			this.title = pullRequest.getTitle();
+			this.updatedAt = pullRequest.getUpdatedAt();
+			this.url = pullRequest.getUrl();
+			if (pullRequest.getUser()!=null)
+				this.user = new GitUser(pullRequest.getUser());			
+		}
+	}
 
 	/**
 	 * @return mergeable
@@ -263,7 +326,7 @@ public class GitPullRequest implements Serializable {
 	/**
 	 * @return base
 	 */
-	public GitPullRequestMarker getBase() {
+	public String getBase() {
 		return base;
 	}
 
@@ -271,7 +334,7 @@ public class GitPullRequest implements Serializable {
 	 * @param base
 	 * @return this pull request
 	 */
-	public GitPullRequest setBase(GitPullRequestMarker base) {
+	public GitPullRequest setBase(String base) {
 		this.base = base;
 		return this;
 	}
@@ -279,7 +342,7 @@ public class GitPullRequest implements Serializable {
 	/**
 	 * @return head
 	 */
-	public GitPullRequestMarker getHead() {
+	public String getHead() {
 		return head;
 	}
 
@@ -287,7 +350,7 @@ public class GitPullRequest implements Serializable {
 	 * @param head
 	 * @return this pull request
 	 */
-	public GitPullRequest setHead(GitPullRequestMarker head) {
+	public GitPullRequest setHead(String head) {
 		this.head = head;
 		return this;
 	}
@@ -455,7 +518,7 @@ public class GitPullRequest implements Serializable {
 	/**
 	 * @return mergedBy
 	 */
-	public User getMergedBy() {
+	public GitUser getMergedBy() {
 		return mergedBy;
 	}
 
@@ -463,7 +526,7 @@ public class GitPullRequest implements Serializable {
 	 * @param mergedBy
 	 * @return this pull request
 	 */
-	public GitPullRequest setMergedBy(User mergedBy) {
+	public GitPullRequest setMergedBy(GitUser mergedBy) {
 		this.mergedBy = mergedBy;
 		return this;
 	}
@@ -471,7 +534,7 @@ public class GitPullRequest implements Serializable {
 	/**
 	 * @return user
 	 */
-	public User getUser() {
+	public GitUser getUser() {
 		return user;
 	}
 
@@ -479,7 +542,7 @@ public class GitPullRequest implements Serializable {
 	 * @param user
 	 * @return this pull request
 	 */
-	public GitPullRequest setUser(User user) {
+	public GitPullRequest setUser(GitUser user) {
 		this.user = user;
 		return this;
 	}
@@ -503,7 +566,7 @@ public class GitPullRequest implements Serializable {
 	/**
 	 * @return milestone
 	 */
-	public Milestone getMilestone() {
+	public GitMilestone getMilestone() {
 		return milestone;
 	}
 
@@ -511,7 +574,7 @@ public class GitPullRequest implements Serializable {
 	 * @param milestone
 	 * @return this pull request
 	 */
-	public GitPullRequest setMilestone(Milestone milestone) {
+	public GitPullRequest setMilestone(GitMilestone milestone) {
 		this.milestone = milestone;
 		return this;
 	}
@@ -519,7 +582,7 @@ public class GitPullRequest implements Serializable {
 	/**
 	 * @return assignee
 	 */
-	public User getAssignee() {
+	public GitUser getAssignee() {
 		return assignee;
 	}
 
@@ -527,7 +590,7 @@ public class GitPullRequest implements Serializable {
 	 * @param assignee
 	 * @return this pull request
 	 */
-	public GitPullRequest setAssignee(User assignee) {
+	public GitPullRequest setAssignee(GitUser assignee) {
 		this.assignee = assignee;
 		return this;
 	}

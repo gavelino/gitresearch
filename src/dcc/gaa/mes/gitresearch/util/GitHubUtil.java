@@ -33,6 +33,7 @@ import dcc.gaa.mes.gitresearch.dao.UserDAO;
 import dcc.gaa.mes.gitresearch.model.GitCommitFile;
 import dcc.gaa.mes.gitresearch.model.GitCommitStats;
 import dcc.gaa.mes.gitresearch.model.GitIssue;
+import dcc.gaa.mes.gitresearch.model.GitPullRequest;
 import dcc.gaa.mes.gitresearch.model.GitRepository;
 import dcc.gaa.mes.gitresearch.model.GitRepositoryCommit;
 import dcc.gaa.mes.gitresearch.model.GitResearch;
@@ -59,6 +60,13 @@ public class GitHubUtil {
 			for (int i = 0; i < repositories.size(); i++) {
 				GitRepository repo = repositories.get(i);
 				List<GitIssue> issues = gitHubservice.getAllIssues(repo);
+				List<GitPullRequest> pullRequests =  gitHubservice.getPullRequests(repo);
+				for (GitPullRequest gitPullRequest : pullRequests) {
+					for (GitIssue gitIssue : issues) {
+						if (gitIssue.getNumber() == gitPullRequest.getNumber())
+							gitIssue.setPullRequest(gitPullRequest);
+					}
+				}
 				repo.setRepositoryIssues(issues);
 			}
 		} while (repositories.size() == 100);

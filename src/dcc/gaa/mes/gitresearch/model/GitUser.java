@@ -74,7 +74,7 @@ public class GitUser implements Serializable {
 	}
 
 	public GitUser(User user) {
-		if (user != null) {
+		if (user != null ) {
 			this.id = user.getId();
 			this.hireable = user.isHireable();
 			this.createdAt = user.getCreatedAt();

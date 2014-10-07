@@ -24,6 +24,7 @@ import org.eclipse.egit.github.core.service.RepositoryService;
 
 import dcc.gaa.mes.gitresearch.model.GitIssue;
 import dcc.gaa.mes.gitresearch.model.GitIssueEvent;
+import dcc.gaa.mes.gitresearch.model.GitPullRequest;
 import dcc.gaa.mes.gitresearch.model.GitRepository;
 import dcc.gaa.mes.gitresearch.model.GitRepositoryCommit;
 import dcc.gaa.mes.gitresearch.util.GitHubUtil;
@@ -35,6 +36,7 @@ public class GitHubService {
 	private RepositoryService repositoryService;
 	private CommitService commitService;
 	private IssueService issueService;
+	private PullRequestService pullRequestService;
 	private MyGitHubClient myClient;
 	
 	
@@ -64,6 +66,10 @@ public class GitHubService {
 //		}
 //		return issueService;
 		return new IssueService(myClient);
+	}
+	
+	private PullRequestService getPullRequestService(){
+		return new PullRequestService(myClient);
 	}
 	
 	public List<GitRepository> searchRepositories(Map<String, String> params, int startPage, int endPage) throws IOException {
@@ -107,9 +113,6 @@ public class GitHubService {
 		
 		logger.debug("Requesting issues of " + gitRepository.getName());
 		List<Issue> issues =  getIssueService().getIssues (repository, issueFilter);
-		for (PullRequest pullRequest : new PullRequestService(myClient).getPullRequests(repository, "all")) {
-			System.out.println(pullRequest);
-		}
 		for (Issue issue : issues) {
 			logger.debug("Adding issue " + issue.getId() + " to " + gitRepository.getName());
 			PageIterator<IssueEvent> events =  getIssueService().pageIssueEvents(repository.getOwner(), repository.getName(), issue.getNumber());
@@ -122,6 +125,22 @@ public class GitHubService {
 		}
 		
 		return gitIssues;
+	}
+	
+	public List<GitPullRequest> getPullRequests(GitRepository gitRepository) throws IOException {
+		logger.trace("GitHubService.getPullRequests(GitRepository)");
+		
+		List<GitPullRequest> gitPullRequests = new ArrayList<GitPullRequest>();
+		SearchRepository repository = GitHubUtil.createFakeSearchRepository(gitRepository);
+		
+		logger.debug("Requesting PullRequest of " + gitRepository.getName());
+		List<PullRequest> pullRequests =  getPullRequestService().getPullRequests(repository, "all");
+		for (PullRequest pull : pullRequests) {
+			logger.debug("Adding issue " + pull.getId() + " to " + gitRepository.getName());
+			gitPullRequests.add(new GitPullRequest(pull));
+		}
+		
+		return gitPullRequests;
 	}
 	
 	private List<GitIssueEvent> getIssueEvents(Iterator<Collection<IssueEvent>> iterator, GitIssue gitIssue) {

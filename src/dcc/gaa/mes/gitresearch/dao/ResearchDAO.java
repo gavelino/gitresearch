@@ -11,6 +11,7 @@ import dcc.gaa.mes.gitresearch.model.GitIssue;
 import dcc.gaa.mes.gitresearch.model.GitIssueEvent;
 import dcc.gaa.mes.gitresearch.model.GitLabel;
 import dcc.gaa.mes.gitresearch.model.GitMilestone;
+import dcc.gaa.mes.gitresearch.model.GitPullRequest;
 import dcc.gaa.mes.gitresearch.model.GitRepository;
 import dcc.gaa.mes.gitresearch.model.GitRepositoryCommit;
 import dcc.gaa.mes.gitresearch.model.GitResearch;
@@ -140,6 +141,25 @@ public class ResearchDAO extends GenericDAO<GitResearch> {
 					GitUser closedBy = gi.getClosedBy();
 					if (closedBy != null && this.em.find(GitUser.class, closedBy.getId()) == null) {
 						this.em.persist(closedBy);
+					}
+					
+					GitPullRequest pull = gi.getPullRequest();
+					if (pull != null && this.em.find(GitPullRequest.class, pull.getId()) == null) {
+						
+						GitUser pullUser = pull.getUser();
+						if (pullUser != null && this.em.find(GitUser.class, pullUser.getId()) == null) {
+							this.em.persist(pullUser);
+						}
+						GitUser pullAssignee = pull.getAssignee();
+						if (pullAssignee != null && this.em.find(GitUser.class, pullAssignee.getId()) == null) {
+							this.em.persist(pullAssignee);
+						}
+						GitUser pullMerged = pull.getMergedBy();
+						if (pullMerged != null && this.em.find(GitUser.class, pullMerged.getId()) == null) {
+							this.em.persist(pullMerged);
+						}
+						
+						this.em.persist(pull);
 					}
 				}
 			}
