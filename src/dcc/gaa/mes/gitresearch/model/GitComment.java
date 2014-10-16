@@ -4,8 +4,13 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -15,6 +20,9 @@ import org.eclipse.egit.github.core.util.DateUtils;
 
 @SuppressWarnings("serial")
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo", length = 14, discriminatorType = DiscriminatorType.STRING) 
+@DiscriminatorValue("CommitComment")
 public class GitComment implements Serializable{
 	
 	@Id
