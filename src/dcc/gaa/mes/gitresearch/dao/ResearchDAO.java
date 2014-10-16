@@ -6,7 +6,9 @@ import java.util.Map;
 
 import javax.persistence.EntityTransaction;
 
+import dcc.gaa.mes.gitresearch.model.GitComment;
 import dcc.gaa.mes.gitresearch.model.GitCommit;
+import dcc.gaa.mes.gitresearch.model.GitCommitComment;
 import dcc.gaa.mes.gitresearch.model.GitIssue;
 import dcc.gaa.mes.gitresearch.model.GitIssueEvent;
 import dcc.gaa.mes.gitresearch.model.GitLabel;
@@ -110,6 +112,13 @@ public class ResearchDAO extends GenericDAO<GitResearch> {
 						if (this.em.find(GitUser.class, actor.getId()) == null) {
 							this.em.persist(actor);
 						}
+						if (issue.getGitComments()!=null) {
+							for (GitComment gcomm : issue.getGitComments()) {
+								if (this.em.find(GitComment.class, gcomm.getId()) == null) {
+									this.em.persist(gcomm);
+								}
+							}
+						}
 					}
 					
 					for (GitLabel gl : gi.getLabels()) {
@@ -157,6 +166,14 @@ public class ResearchDAO extends GenericDAO<GitResearch> {
 						GitUser pullMerged = pull.getMergedBy();
 						if (pullMerged != null && this.em.find(GitUser.class, pullMerged.getId()) == null) {
 							this.em.persist(pullMerged);
+						}
+
+						if (pull.getGitComments()!=null) {
+							for (GitCommitComment gcomm : pull.getGitComments()) {
+								if (this.em.find(GitCommitComment.class, gcomm.getId()) == null) {
+									this.em.persist(gcomm);
+								}
+							}
 						}
 						
 						this.em.persist(pull);

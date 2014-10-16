@@ -38,6 +38,9 @@ public class GitCommit implements Serializable {
 	private String sha;
 
 	private String url;
+	
+	@OneToMany(cascade = { CascadeType.ALL })
+	private List<GitCommitComment> gitComments;
 
 	// TODO Avaliar necessidade desse atributo
 	// private Tree tree;
@@ -140,6 +143,14 @@ public class GitCommit implements Serializable {
 	@Override
 	public String toString() {
 		return "GitCommit [id=" + id + ", sha=" + sha + "]";
+	}
+
+	public List<GitCommitComment> getGitComments() {
+		return gitComments;
+	}
+
+	public void setGitComments(List<GitCommitComment> gitComments) {
+		this.gitComments = gitComments;
 	}
 	
 }

@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -74,6 +75,9 @@ public class GitIssue implements Serializable {
 	@ManyToOne(cascade = { CascadeType.REFRESH })
 	private GitUser closedBy;
 
+	@OneToMany(cascade = { CascadeType.ALL })
+	private List<GitComment> gitComments;
+	
 	public GitIssue() {
 		super();
 	}
@@ -294,6 +298,14 @@ public class GitIssue implements Serializable {
 		builder.append("GitIssue [id=").append(id).append(", title=")
 				.append(title).append("]");
 		return builder.toString();
+	}
+
+	public List<GitComment> getGitComments() {
+		return gitComments;
+	}
+
+	public void setGitComments(List<GitComment> gitComments) {
+		this.gitComments = gitComments;
 	}
 
 }

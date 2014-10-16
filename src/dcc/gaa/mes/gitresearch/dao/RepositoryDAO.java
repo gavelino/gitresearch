@@ -1,5 +1,6 @@
 package dcc.gaa.mes.gitresearch.dao;
 
+import dcc.gaa.mes.gitresearch.model.GitComment;
 import dcc.gaa.mes.gitresearch.model.GitCommit;
 import dcc.gaa.mes.gitresearch.model.GitIssue;
 import dcc.gaa.mes.gitresearch.model.GitIssueEvent;

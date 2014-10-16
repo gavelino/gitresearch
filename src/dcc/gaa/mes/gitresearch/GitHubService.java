@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.eclipse.egit.github.core.Comment;
+import org.eclipse.egit.github.core.CommitComment;
 import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.IssueEvent;
 import org.eclipse.egit.github.core.PullRequest;
@@ -22,6 +23,8 @@ import org.eclipse.egit.github.core.service.IssueService;
 import org.eclipse.egit.github.core.service.PullRequestService;
 import org.eclipse.egit.github.core.service.RepositoryService;
 
+import dcc.gaa.mes.gitresearch.model.GitComment;
+import dcc.gaa.mes.gitresearch.model.GitCommitComment;
 import dcc.gaa.mes.gitresearch.model.GitIssue;
 import dcc.gaa.mes.gitresearch.model.GitIssueEvent;
 import dcc.gaa.mes.gitresearch.model.GitPullRequest;
@@ -118,7 +121,13 @@ public class GitHubService {
 			PageIterator<IssueEvent> events =  getIssueService().pageIssueEvents(repository.getOwner(), repository.getName(), issue.getNumber());
  			GitIssue gitIssue =  new GitIssue(issue, gitRepository);
  			gitIssue.setEvents(getIssueEvents(events.iterator(), gitIssue));
+ 			// Add comments
 			List<Comment> comments = getIssueService().getComments(repository.getOwner(),repository.getName(), issue.getNumber());
+			List<GitComment> gitComments = new ArrayList<GitComment>();
+			for (Comment comment : comments) {
+				gitComments.add(new GitComment(comment));
+			}
+			gitIssue.setGitComments(gitComments);
 			gitIssues.add(gitIssue);
 			
 			getIssueService().pageIssueEvents(repository.getOwner(), repository.getName(), issue.getNumber());
@@ -136,7 +145,21 @@ public class GitHubService {
 		logger.debug("Requesting PullRequest of " + gitRepository.getName());
 		List<PullRequest> pullRequests =  getPullRequestService().getPullRequests(repository, "all");
 		for (PullRequest pull : pullRequests) {
-			logger.debug("Adding issue " + pull.getId() + " to " + gitRepository.getName());
+			GitPullRequest pullRequest = new GitPullRequest(pull);
+			//TODO corrigir erro na carga de comentários em pull requests
+			// Add comments
+			if (pull.getComments()>0){
+				List<CommitComment> comments = getPullRequestService().getComments(repository, (int) pull.getId());
+			
+				List<GitCommitComment> gitComments = new ArrayList<GitCommitComment>();
+				for (CommitComment comment : comments) {
+					gitComments.add(new GitCommitComment(comment));
+				}
+				pullRequest.setGitComments(gitComments);
+			}
+			
+			
+			logger.debug("Adding pullResquest " + pull.getId() + " to " + gitRepository.getName());
 			gitPullRequests.add(new GitPullRequest(pull));
 		}
 		

@@ -2,6 +2,7 @@ package dcc.gaa.mes.gitresearch.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorColumn;
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -41,7 +43,7 @@ public class GitComment implements Serializable{
 	private String bodyText;
 
 	private String url;
-
+	
 	@ManyToOne(cascade = { CascadeType.REFRESH })
 	private GitUser user;
 	
