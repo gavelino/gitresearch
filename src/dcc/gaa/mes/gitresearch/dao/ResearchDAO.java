@@ -88,12 +88,12 @@ public class ResearchDAO extends GenericDAO<GitResearch> {
 					}
 					
 					GitUser user = rc.getAuthor();
-					if (this.em.find(GitUser.class, user.getId()) == null) {
+					if (user != null && this.em.find(GitUser.class, user.getId()) == null) {
 						this.em.persist(user);
 					}
 					
 					user = rc.getCommitter();
-					if (this.em.find(GitUser.class, user.getId()) == null) {
+					if (user != null && this.em.find(GitUser.class, user.getId()) == null) {
 						this.em.persist(user);
 					}
 					
@@ -104,16 +104,20 @@ public class ResearchDAO extends GenericDAO<GitResearch> {
 						this.em.persist(ie);
 						
 						GitIssue issue = ie.getIssue();
-						if (this.em.find(GitIssue.class, issue.getId()) == null) {
+						if (issue != null && this.em.find(GitIssue.class, issue.getId()) == null) {
 							this.em.persist(issue);
 						}
 						
 						GitUser actor = ie.getActor();
-						if (this.em.find(GitUser.class, actor.getId()) == null) {
+						if (actor != null && actor.getId() !=null && this.em.find(GitUser.class, actor.getId()) == null) {
 							this.em.persist(actor);
 						}
 						if (issue.getGitComments()!=null) {
 							for (GitComment gcomm : issue.getGitComments()) {
+								if (gcomm.getUser()!=null && this.em.find(GitUser.class, gcomm.getUser().getId()) == null){
+									this.em.persist(gcomm.getUser());
+								}
+									
 								if (this.em.find(GitComment.class, gcomm.getId()) == null) {
 									this.em.persist(gcomm);
 								}

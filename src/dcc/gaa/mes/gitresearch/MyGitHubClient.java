@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.client.GitHubRequest;
 import org.eclipse.egit.github.core.client.GitHubResponse;
@@ -18,7 +19,8 @@ import org.eclipse.egit.github.core.client.GitHubResponse;
 import dcc.gaa.mes.gitresearch.util.GitHubUtil;
 
 public class MyGitHubClient extends GitHubClient{
-	
+
+	private static final Logger logger = Logger.getLogger(MyGitHubClient.class);
 	private Queue<GitHubClient> clients = new LinkedList<GitHubClient>();
 	private Map<GitHubClient, String> tokenMap = new HashMap<GitHubClient, String>();
 	private GitHubClient client;
@@ -181,7 +183,8 @@ public class MyGitHubClient extends GitHubClient{
 			if (clients.peek().getRemainingRequests()>=1|| clients.peek().getRemainingRequests() == -1){
 				this.client = clients.poll();
 				clients.add(this.client);
-				System.out.println("Cliente " +oldClientName+ " alterado. Novo cliente "+client.getUser());
+				logger.debug("\n\nCliente " +oldClientName+ " alterado. Novo cliente "+client.getUser() +"\n\n");
+				System.out.println();
 			}
 			else{
 				try {
