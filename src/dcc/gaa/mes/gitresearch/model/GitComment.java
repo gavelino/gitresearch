@@ -28,7 +28,7 @@ import org.eclipse.egit.github.core.util.DateUtils;
 public class GitComment implements Serializable{
 	
 	@Id
-	private long id;
+	private Long id;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
@@ -147,7 +147,7 @@ public class GitComment implements Serializable{
 	/**
 	 * @return id
 	 */
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -155,7 +155,7 @@ public class GitComment implements Serializable{
 	 * @param id
 	 * @return this comment
 	 */
-	public GitComment setId(long id) {
+	public GitComment setId(Long id) {
 		this.id = id;
 		return this;
 	}

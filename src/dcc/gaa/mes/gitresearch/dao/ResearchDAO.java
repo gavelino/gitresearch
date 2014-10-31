@@ -20,6 +20,8 @@ import dcc.gaa.mes.gitresearch.model.GitResearch;
 import dcc.gaa.mes.gitresearch.model.GitUser;
 
 public class ResearchDAO extends GenericDAO<GitResearch> {
+	UserDAO userDao = new UserDAO();
+	CommitDAO commitDao = new CommitDAO();
 	
 	public void prePersist(GitResearch research) {
 	    
@@ -72,30 +74,29 @@ public class ResearchDAO extends GenericDAO<GitResearch> {
 			for (GitRepository gr : research.getRepositories()) {
 				for (GitRepositoryCommit rc : gr.getRepositoryCommits()) {
 					if (rc.getCommit().getId() == null) {
+//						commitDao.persist(rc.getCommit());
 						this.em.persist(rc.getCommit());
 					}
 					
 					for (GitCommit commit : rc.getParents()) {
 						if (commit.getId() == null) {
+//							commitDao.persist(commit);
 							this.em.persist(commit);
 						}
 					}
 					
 					for (GitCommit commit : rc.getCommit().getParents()) {
 						if (commit.getId() == null) {
+//							commitDao.persist(commit);
 							this.em.persist(commit);
 						}
 					}
 					
 					GitUser user = rc.getAuthor();
-					if (user != null && this.em.find(GitUser.class, user.getId()) == null) {
-						this.em.persist(user);
-					}
+					persistGitUser(user);
 					
 					user = rc.getCommitter();
-					if (user != null && this.em.find(GitUser.class, user.getId()) == null) {
-						this.em.persist(user);
-					}
+					persistGitUser(user);
 					
 				}
 				
@@ -142,40 +143,36 @@ public class ResearchDAO extends GenericDAO<GitResearch> {
 					}
 					
 					GitUser assignee = gi.getAssignee();
-					if (assignee != null && this.em.find(GitUser.class, assignee.getId()) == null) {
-						this.em.persist(assignee);
-					}
+					persistGitUser(assignee);
 					
 					GitUser user = gi.getUser();
-					if (user != null && this.em.find(GitUser.class, user.getId()) == null) {
-						this.em.persist(user);
-					}
+					persistGitUser(user);
 					
 					GitUser closedBy = gi.getClosedBy();
-					if (closedBy != null && this.em.find(GitUser.class, closedBy.getId()) == null) {
-						this.em.persist(closedBy);
-					}
+					persistGitUser(closedBy);
 					
 					GitPullRequest pull = gi.getPullRequest();
 					if (pull != null && this.em.find(GitPullRequest.class, pull.getId()) == null) {
 						
 						GitUser pullUser = pull.getUser();
-						if (pullUser != null && this.em.find(GitUser.class, pullUser.getId()) == null) {
-							this.em.persist(pullUser);
-						}
+						persistGitUser(pullUser);
 						GitUser pullAssignee = pull.getAssignee();
-						if (pullAssignee != null && this.em.find(GitUser.class, pullAssignee.getId()) == null) {
-							this.em.persist(pullAssignee);
-						}
+						persistGitUser(pullAssignee);
 						GitUser pullMerged = pull.getMergedBy();
-						if (pullMerged != null && this.em.find(GitUser.class, pullMerged.getId()) == null) {
-							this.em.persist(pullMerged);
-						}
+						persistGitUser(pullMerged);
 
 						if (pull.getGitComments()!=null) {
 							for (GitCommitComment gcomm : pull.getGitComments()) {
-								if (this.em.find(GitCommitComment.class, gcomm.getId()) == null) {
-									this.em.persist(gcomm);
+								if (gcomm !=null) {
+									if (gcomm.getUser() != null
+											&& this.em.find(GitUser.class,
+													gcomm.getUser().getId()) == null) {
+										this.em.persist(gcomm.getUser());
+									}
+									if (this.em.find(GitCommitComment.class,
+											gcomm.getId()) == null) {
+										this.em.persist(gcomm);
+									}
 								}
 							}
 						}
@@ -192,6 +189,12 @@ public class ResearchDAO extends GenericDAO<GitResearch> {
 			if(tx != null && tx.isActive()) 
 				tx.rollback();
 			throw re;
+		}
+	}
+
+	private void persistGitUser(GitUser user) {
+		if (user != null && this.em.find(GitUser.class, user.getId()) == null) {
+			this.em.persist(user);
 		}
 	}
 	

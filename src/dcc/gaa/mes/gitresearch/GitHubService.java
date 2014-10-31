@@ -148,15 +148,15 @@ public class GitHubService {
 			GitPullRequest pullRequest = new GitPullRequest(pull);
 			//TODO corrigir erro na carga de comentários em pull requests
 			// Add comments
-			if (pull.getComments()>0){
-				List<CommitComment> comments = getPullRequestService().getComments(repository, (int) pull.getId());
+//			if (pull.getComments()>0){
+				List<CommitComment> comments = getPullRequestService().getComments(repository, (int) pull.getNumber());
 			
 				List<GitCommitComment> gitComments = new ArrayList<GitCommitComment>();
 				for (CommitComment comment : comments) {
 					gitComments.add(new GitCommitComment(comment));
 				}
 				pullRequest.setGitComments(gitComments);
-			}
+//			}
 			
 			
 			logger.debug("Adding pullResquest " + pull.getId() + " to " + gitRepository.getName());
