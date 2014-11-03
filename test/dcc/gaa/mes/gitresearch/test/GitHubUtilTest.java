@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -26,8 +27,9 @@ public class GitHubUtilTest extends AbstractTest {
 
     static final Logger logger = LogManager.getLogger(GitHubUtilTest.class);
 
-    private String[] tokens = new String[] { "fea785517975ea8eefd192926a03c16ffb489748",
-            "acebecaff6fbdc6213be4d478be01fc604066757", "4999affe50d647fb6127bba6fa5dd7a654da00ed" };
+    private String[] tokens = new String[] { "acebecaff6fbdc6213be4d478be01fc604066757", 
+    										 "4999affe50d647fb6127bba6fa5dd7a654da00ed",
+    										 "fea785517975ea8eefd192926a03c16ffb489748"};
 
     @Test
     public void test1_getResetTime() {
@@ -48,14 +50,16 @@ public class GitHubUtilTest extends AbstractTest {
     public void test2_searchAndInsert() {
         logger.info("Testing GitHubUtil.searchAndInsert() using: ");
 
-        HashSet<String> tokens = new HashSet<String>();
+        HashSet<String> tokens = new LinkedHashSet<String>();
         Collections.addAll(tokens, this.tokens);
 
         logger.info("tokens = " + tokens);
 
         HashMap<String, String> params = new HashMap<String, String>();
-        params.put("language", "java");
-        params.put("user", "gavelino");
+//        params.put("language", "java");
+//        params.put("user", "gavelino");
+
+        params.put("repo", "elasticsearch/elasticsearch");
 
         logger.info("params = " + params);
 

@@ -98,7 +98,7 @@ public class GitUser implements Serializable {
 			this.name = user.getName();
 			this.type = user.getType();
 			this.url = user.getUrl();
-		}
+		}		
 	}
 
 	/**

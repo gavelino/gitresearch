@@ -41,7 +41,8 @@ public class GitIssueEvent implements Serializable {
 	public GitIssueEvent(IssueEvent issueEvent, GitIssue gitIssue) {
 		if (issueEvent !=null) {
 			this.setCommitId(issueEvent.getCommitId());
-			this.setActor(new GitUser(issueEvent.getActor()));
+			if (issueEvent.getActor()!=null)
+				this.setActor(new GitUser(issueEvent.getActor()));
 			this.setCreatedAt(issueEvent.getCreatedAt());
 			this.setEvent(issueEvent.getEvent());
 			this.setId(issueEvent.getId());

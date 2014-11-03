@@ -2,11 +2,13 @@ package dcc.gaa.mes.gitresearch.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -89,6 +91,10 @@ public class GitPullRequest implements Serializable {
 
 	@ManyToOne(cascade = { CascadeType.REFRESH })
 	private GitUser user;
+	
+
+	@OneToMany(cascade = { CascadeType.ALL })
+	private List<GitCommitComment> gitComments;
 	
 	public GitPullRequest() {
 	}
@@ -601,5 +607,13 @@ public class GitPullRequest implements Serializable {
 		builder.append("GitPullRequest [id=").append(id).append(", number=")
 				.append(number).append(", title=").append(title).append("]");
 		return builder.toString();
+	}
+
+	public List<GitCommitComment> getGitComments() {
+		return gitComments;
+	}
+
+	public void setGitComments(List<GitCommitComment> gitComments) {
+		this.gitComments = gitComments;
 	}
 }
