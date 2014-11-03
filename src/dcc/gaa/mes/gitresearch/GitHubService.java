@@ -145,12 +145,13 @@ public class GitHubService {
 		logger.debug("Requesting PullRequest of " + gitRepository.getName());
 		List<PullRequest> pullRequests =  getPullRequestService().getPullRequests(repository, "all");
 		for (PullRequest pull : pullRequests) {
-			GitPullRequest pullRequest = new GitPullRequest(pull);
+			// Busca específica por numero é necessária para que todas as informações sejam carregadas.
+			GitPullRequest pullRequest = new GitPullRequest(getPullRequestService().getPullRequest(repository, pull.getNumber()));
 			//TODO corrigir erro na carga de comentários em pull requests
 			// Add comments
 //			if (pull.getComments()>0){
-				List<CommitComment> comments = getPullRequestService().getComments(repository, (int) pull.getNumber());
-			
+				List<CommitComment> comments = getPullRequestService().getComments(repository, (int) pullRequest.getNumber());
+				
 				List<GitCommitComment> gitComments = new ArrayList<GitCommitComment>();
 				for (CommitComment comment : comments) {
 					gitComments.add(new GitCommitComment(comment));
@@ -159,8 +160,8 @@ public class GitHubService {
 //			}
 			
 			
-			logger.debug("Adding pullResquest " + pull.getId() + " to " + gitRepository.getName());
-			gitPullRequests.add(new GitPullRequest(pull));
+			logger.debug("Adding pullResquest " + pullRequest.getId() + " to " + gitRepository.getName());
+			gitPullRequests.add(pullRequest);
 		}
 		
 		return gitPullRequests;
